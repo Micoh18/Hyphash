@@ -1,47 +1,101 @@
 "use client";
 
+import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 
-function FloatingPaths({ position }: { position: number }) {
-    const paths = Array.from({ length: 36 }, (_, i) => ({
-        id: i,
-        d: `M-${380 - i * 5 * position} -${189 + i * 6}C-${
-            380 - i * 5 * position
-        } -${189 + i * 6} -${312 - i * 5 * position} ${216 - i * 6} ${
-            152 - i * 5 * position
-        } ${343 - i * 6}C${616 - i * 5 * position} ${470 - i * 6} ${
-            684 - i * 5 * position
-        } ${875 - i * 6} ${684 - i * 5 * position} ${875 - i * 6}`,
-        color: `rgba(15,23,42,${0.1 + i * 0.03})`,
-        width: 0.5 + i * 0.03,
-    }));
+// Seeded pseudo-random for deterministic SSR/client renders
+function seededRandom(seed: number) {
+    const x = Math.sin(seed * 9301 + 49297) * 49297;
+    return x - Math.floor(x);
+}
+
+interface SporeRay {
+    id: number;
+    angle: number;
+    innerRadius: number;
+    outerRadius: number;
+    width: number;
+    opacity: number;
+    curve: number;
+    delay: number;
+}
+
+function SporePrint() {
+    const cx = 500;
+    const cy = 500;
+    const innerR = 65;
+    const baseOuterR = 380;
+    const rayCount = 260;
+
+    const rays: SporeRay[] = useMemo(() => {
+        return Array.from({ length: rayCount }, (_, i) => {
+            const rand = seededRandom(i);
+            const rand2 = seededRandom(i + 1000);
+            const rand3 = seededRandom(i + 2000);
+            const rand4 = seededRandom(i + 3000);
+
+            const angle = (i / rayCount) * Math.PI * 2 + (rand - 0.5) * 0.02;
+            const lengthVariation = 0.95 + rand2 * 0.05;
+            const outerRadius = baseOuterR * lengthVariation;
+
+            return {
+                id: i,
+                angle,
+                innerRadius: innerR + rand3 * 8,
+                outerRadius: outerRadius,
+                width: 0.4 + rand * 1.4,
+                opacity: 0.15 + rand2 * 0.55,
+                curve: (rand3 - 0.5) * 18,
+                delay: rand4 * 1.8,
+            };
+        });
+    }, []);
+
+    function rayPath(ray: SporeRay): string {
+        const cos = Math.cos(ray.angle);
+        const sin = Math.sin(ray.angle);
+
+        const x1 = cx + cos * ray.innerRadius;
+        const y1 = cy + sin * ray.innerRadius;
+        const x2 = cx + cos * ray.outerRadius;
+        const y2 = cy + sin * ray.outerRadius;
+
+        // Perpendicular offset for slight curve
+        const mx = (x1 + x2) / 2 + -sin * ray.curve;
+        const my = (y1 + y2) / 2 + cos * ray.curve;
+
+        return `M${x1},${y1} Q${mx},${my} ${x2},${y2}`;
+    }
 
     return (
-        <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
             <svg
-                className="w-full h-full text-slate-950 dark:text-white"
-                viewBox="0 0 696 316"
+                className="w-[min(90vw,900px)] h-[min(90vw,900px)] text-stone-800 dark:text-stone-300"
+                viewBox="0 0 1000 1000"
                 fill="none"
             >
-                <title>Background Paths</title>
-                {paths.map((path) => (
+                <title>Spore Print</title>
+                {rays.map((ray) => (
                     <motion.path
-                        key={path.id}
-                        d={path.d}
+                        key={ray.id}
+                        d={rayPath(ray)}
                         stroke="currentColor"
-                        strokeWidth={path.width}
-                        strokeOpacity={0.1 + path.id * 0.03}
-                        initial={{ pathLength: 0.3, opacity: 0.6 }}
-                        animate={{
-                            pathLength: 1,
-                            opacity: [0.3, 0.6, 0.3],
-                            pathOffset: [0, 1, 0],
-                        }}
+                        strokeWidth={ray.width}
+                        strokeLinecap="round"
+                        initial={{ pathLength: 0, opacity: 0 }}
+                        animate={{ pathLength: 1, opacity: ray.opacity }}
                         transition={{
-                            duration: 20 + Math.random() * 10,
-                            repeat: Number.POSITIVE_INFINITY,
-                            ease: "linear",
+                            pathLength: {
+                                duration: 5 + ray.delay * 1.5,
+                                delay: ray.delay * 0.5,
+                                ease: [0.25, 0.1, 0.25, 1],
+                            },
+                            opacity: {
+                                duration: 1.2,
+                                delay: ray.delay * 0.5,
+                                ease: "easeOut",
+                            },
                         }}
                     />
                 ))}
@@ -90,8 +144,7 @@ export function BackgroundPaths({
     return (
         <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-white dark:bg-neutral-950">
             <div className="absolute inset-0">
-                <FloatingPaths position={1} />
-                <FloatingPaths position={-1} />
+                <SporePrint />
             </div>
 
             <div className="relative z-10 container mx-auto px-4 md:px-6 text-center">
