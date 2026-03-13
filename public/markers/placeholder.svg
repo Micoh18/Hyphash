@@ -1,0 +1,5 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="200" fill="#f0ebe3" rx="12"/>
+  <text x="100" y="90" text-anchor="middle" font-size="48">🍄</text>
+  <text x="100" y="130" text-anchor="middle" font-size="14" fill="#6b6560" font-family="system-ui">No photo</text>
+</svg>
