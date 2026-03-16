@@ -167,12 +167,14 @@ export function ObservationForm() {
   };
 
   // Auto-fill GPS when it arrives
-  if (geo.latitude && geo.longitude && gpsLat === null && gpsLng === null) {
-    setGpsLat(geo.latitude);
-    setGpsLng(geo.longitude);
-    setLat(geo.latitude);
-    setLng(geo.longitude);
-  }
+  useEffect(() => {
+    if (geo.latitude && geo.longitude && gpsLat === null && gpsLng === null) {
+      setGpsLat(geo.latitude);
+      setGpsLng(geo.longitude);
+      setLat(geo.latitude);
+      setLng(geo.longitude);
+    }
+  }, [geo.latitude, geo.longitude, gpsLat, gpsLng]);
 
   const handleSubmit = async () => {
     if (!lat || !lng) return;

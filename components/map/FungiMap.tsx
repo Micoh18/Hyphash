@@ -65,7 +65,7 @@ function ObservationPopup({ observation }: { observation: Observation }) {
 
   return (
     <div className="observation-popup">
-      <h3 className="text-sm font-semibold text-gray-900 italic">{species}</h3>
+      <h3 className="text-sm font-semibold italic">{species}</h3>
       <p className="text-xs text-gray-500 mt-0.5">
         {observation.observer?.username ?? t("common.anonymous")} &middot;{" "}
         {new Date(observation.observed_at).toLocaleDateString()}
@@ -76,7 +76,7 @@ function ObservationPopup({ observation }: { observation: Observation }) {
         {t(`status.${observation.status}`)}
       </span>
       {observation.notes && (
-        <p className="text-xs text-gray-600 mt-1.5 line-clamp-2">
+        <p className="text-xs text-gray-500 mt-1.5 line-clamp-2">
           {observation.notes}
         </p>
       )}

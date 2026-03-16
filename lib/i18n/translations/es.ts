@@ -58,6 +58,17 @@ export const es: Record<TranslationKey, string> = {
   "landing.cta_title": "¿Listo para explorar?",
   "landing.cta_desc": "Únete a una red global de micólogos, recolectores y amantes de la naturaleza construyendo el mapa más detallado del mundo fúngico.",
   "landing.cta_button": "Comenzar a explorar",
+  "landing.faq_title": "Preguntas frecuentes",
+  "landing.faq1_q": "¿Necesito ser experto en micología?",
+  "landing.faq1_a": "Para nada. El formulario de observación está diseñado para enseñarte qué buscar. Describe lo que ves y la comunidad te ayudará con la identificación. Cada observación ayuda, sin importar tu nivel de experiencia.",
+  "landing.faq2_q": "¿Cómo funciona la identificación comunitaria?",
+  "landing.faq2_a": "Después de enviar una observación, otros usuarios pueden estar de acuerdo, en desacuerdo o sugerir especies alternativas. Cuando suficientes personas alcanzan consenso, la observación se marca como verificada por la comunidad.",
+  "landing.faq3_q": "¿Mis datos son abiertos?",
+  "landing.faq3_a": "Sí. Todas las observaciones son accesibles públicamente. Las fotos pueden almacenarse en IPFS para un alojamiento permanente y descentralizado, y las observaciones pueden acuñarse como NFTs en Stellar para una procedencia inmutable.",
+  "landing.faq4_q": "¿Qué hace diferente a Mycelium de iNaturalist?",
+  "landing.faq4_a": "Mycelium se centra exclusivamente en hongos, con descripciones profundas y enfoque en el mapa. En lugar de solo subir una foto, nuestro formulario estructurado captura las características morfológicas detalladas que los micólogos realmente necesitan para una identificación precisa.",
+  "landing.faq5_q": "¿Puedo usarlo en mi teléfono?",
+  "landing.faq5_a": "La aplicación web es totalmente responsive y funciona en navegadores móviles. También se está desarrollando una app móvil dedicada con soporte offline para uso en campo.",
 
   // Home page
   "home.hero": "Una red abierta de conocimiento fúngico, hecha por y para la comunidad. Documenta lo que encuentres, ayuda a identificar lo que otros comparten y hagamos crecer el mapa juntos.",
@@ -470,4 +481,85 @@ export const es: Record<TranslationKey, string> = {
   "info.habitat": "El entorno general donde encontraste la seta — tipo de bosque, pradera, jardín, etc.",
   "info.growth_pattern": "¿Cómo están dispuestas las setas? Una sola (solitaria), un grupo apretado (en grupo), un corro de brujas, o dispersas al azar.",
   "info.spore_print": "La esporada se obtiene colocando el sombrero con las láminas hacia abajo sobre papel durante unas horas. Las esporas caen y dejan una huella de color — muy útil para la identificación.",
+
+  // Footer
+  "footer.description": "Una plataforma impulsada por la comunidad para documentar e identificar hongos silvestres. Código abierto, sin anuncios y creada por micólogos para todos.",
+  "footer.product": "Producto",
+  "footer.resources": "Recursos",
+  "footer.community": "Comunidad",
+  "footer.github": "GitHub",
+  "footer.privacy": "Política de Privacidad",
+  "footer.terms": "Términos de Servicio",
+  "footer.discussions": "Discusiones",
+  "footer.contributing": "Contribuir",
+  "footer.copyright": "© 2024 Mycelium. Código abierto bajo licencia MIT.",
+  "footer.open_source_badge": "Código Abierto",
+
+  // 404
+  "notfound.title": "Perdido en el micelio",
+  "notfound.subtitle": "Esta página no existe — pero hay mucho por explorar.",
+  "notfound.go_home": "Ir al inicio",
+  "notfound.go_map": "Explorar Mapa",
+
+  // Mission section (Why Fungi Matter)
+  "landing.mission_title": "Por qué importan los hongos",
+  "landing.mission_p1": "Los hongos son los arquitectos ocultos de casi todos los ecosistemas de la Tierra. Descomponen materia orgánica, forman redes simbióticas con las plantas y producen compuestos que sostienen cadenas alimentarias enteras. Sin embargo, apenas hemos arañado la superficie de su comprensión.",
+  "landing.mission_p2": "La ciencia ciudadana tiene el poder de cambiar eso. Cada observación — incluso una sola foto con ubicación y descripción — añade un dato a nuestro entendimiento colectivo del reino fúngico.",
+  "landing.fact1_number": "90%",
+  "landing.fact1_label": "Sin documentar",
+  "landing.fact1_desc": "Se estima que el 90% de las especies de hongos nunca han sido descritas formalmente por la ciencia.",
+  "landing.fact2_number": "25%",
+  "landing.fact2_label": "De la vida del suelo",
+  "landing.fact2_desc": "Los hongos constituyen aproximadamente el 25% de la biomasa del suelo terrestre, formando vastas redes subterráneas.",
+  "landing.fact3_number": "6x",
+  "landing.fact3_label": "Más que las plantas",
+  "landing.fact3_desc": "Se estima que hay 6 veces más especies de hongos que de plantas en la Tierra.",
+
+  // Built Different section
+  "landing.different_title": "Hecho diferente",
+  "landing.different_subtitle": "Mycelium no es otra app genérica de biodiversidad. Está diseñada específicamente para los desafíos únicos de la documentación de hongos.",
+  "landing.diff1_title": "Enfoque exclusivo en hongos",
+  "landing.diff1_desc": "Sin aves, sin plantas — solo hongos. Una plataforma dedicada significa mejores herramientas, mejor comunidad y mejor ciencia.",
+  "landing.diff2_title": "Descripciones profundas",
+  "landing.diff2_desc": "Formularios guiados capturan sombrero, láminas, pie, olor y hábitat — los detalles morfológicos que realmente importan para la identificación.",
+  "landing.diff3_title": "Descentralizado y abierto",
+  "landing.diff3_desc": "Código abierto, datos abiertos. Las observaciones pueden almacenarse en IPFS y acuñarse en Stellar para una procedencia permanente y verificable.",
+
+  // Recent Activity / Founding
+  "landing.recent_title": "Observaciones recientes",
+  "landing.recent_empty": "Aún no hay observaciones. Sé el primer explorador.",
+  "landing.recent_cta": "Registra tu primera observación",
+  "landing.founding_title": "Únete a la comunidad fundadora",
+  "landing.founding_desc": "Mycelium está empezando. Los primeros observadores moldean cómo crece la plataforma — tus contribuciones importan más ahora que nunca.",
+  "landing.founding_cta": "Sé un observador fundador",
+
+  // About page
+  "about.title": "Sobre Mycelium",
+  "about.mission_title": "Nuestra misión",
+  "about.mission_p1": "Mycelium existe para construir el mapa más detallado, abierto y comunitario del mundo fúngico. Creemos que los hongos están enormemente subrepresentados en las bases de datos de biodiversidad, y que la mejor manera de cambiar eso es dar a las personas las herramientas para documentar lo que encuentran.",
+  "about.mission_p2": "Estamos construyendo una plataforma donde cada observación — desde un paseo casual por el parque hasta una expedición en lo profundo del bosque — contribuye a un entendimiento compartido de la biodiversidad fúngica.",
+  "about.story_title": "La historia",
+  "about.story_p1": "Mycelium comenzó como una idea simple: ¿y si existiera un espacio dedicado a las observaciones de hongos que fuera más allá de una foto? Un lugar que enseñara a las personas qué observar, capturara los detalles morfológicos que importan y construyera una comunidad en torno a la identificación colectiva.",
+  "about.opensource_title": "Código abierto",
+  "about.opensource_desc": "Mycelium es completamente de código abierto. El código, el modelo de datos y las guías de la comunidad se desarrollan de forma abierta. Creemos que la transparencia genera confianza, y la confianza genera mejor ciencia.",
+  "about.community_title": "Comunidad",
+  "about.community_desc": "Cada observación, cada sugerencia de identificación, cada hilo de discusión — todo viene de la comunidad. Mycelium está construido por micólogos, recolectores, estudiantes y caminantes curiosos. Todos son bienvenidos.",
+
+  // Privacy page
+  "privacy.title": "Política de Privacidad",
+  "privacy.intro": "Mycelium respeta tu privacidad. Esta política explica qué datos recopilamos y cómo los usamos.",
+  "privacy.data_title": "Qué recopilamos",
+  "privacy.data_desc": "Las observaciones que envías (incluyendo fotos, ubicación y descripciones) son públicas por defecto. Almacenamos tu dirección de wallet con fines de identidad. No vendemos ni compartimos tus datos personales con terceros.",
+  "privacy.location_title": "Datos de ubicación",
+  "privacy.location_desc": "Las coordenadas GPS se adjuntan a las observaciones solo cuando eliges explícitamente compartir tu ubicación. Puedes ajustar el pin en el mapa para mayor privacidad.",
+  "privacy.updated": "Última actualización: marzo 2025",
+
+  // Terms page
+  "terms.title": "Términos de Servicio",
+  "terms.intro": "Al usar Mycelium, aceptas estos términos. Mycelium es una plataforma abierta e impulsada por la comunidad para documentar hongos.",
+  "terms.usage_title": "Uso aceptable",
+  "terms.usage_desc": "Te comprometes a enviar solo observaciones genuinas. No subas contenido inapropiado, spam ni identificaciones deliberadamente engañosas. Los moderadores de la comunidad pueden eliminar contenido que viole estas pautas.",
+  "terms.content_title": "Tu contenido",
+  "terms.content_desc": "Las observaciones que envías son públicas y contribuyen a un conjunto de datos abierto. Al enviarlas, otorgas una licencia para que la comunidad use, discuta y se base en tus observaciones.",
+  "terms.updated": "Última actualización: marzo 2025",
 };

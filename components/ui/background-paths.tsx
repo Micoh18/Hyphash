@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 // Seeded pseudo-random for deterministic SSR/client renders
@@ -69,9 +70,9 @@ function SporePrint() {
     }
 
     return (
-        <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+        <div className="absolute inset-0 pointer-events-none flex items-center justify-center translate-x-[20%] sm:translate-x-[25%] md:translate-x-[28%]">
             <svg
-                className="w-[min(90vw,900px)] h-[min(90vw,900px)] text-stone-800 dark:text-stone-300"
+                className="w-[min(75vw,700px)] h-[min(75vw,700px)] text-stone-800 dark:text-stone-300"
                 viewBox="0 0 1000 1000"
                 fill="none"
             >
@@ -147,12 +148,12 @@ export function BackgroundPaths({
                 <SporePrint />
             </div>
 
-            <div className="relative z-10 container mx-auto px-4 md:px-6 text-center">
+            <div className="relative z-10 container mx-auto px-6 md:px-12 lg:px-20 text-left">
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 2 }}
-                    className="max-w-4xl mx-auto"
+                    className="max-w-2xl"
                 >
                     <h1 className="text-5xl sm:text-7xl md:text-8xl font-bold mb-8 tracking-tighter">
                         {words.map((word, wordIndex) => (
@@ -189,7 +190,7 @@ export function BackgroundPaths({
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.8, duration: 0.8 }}
-                            className="text-lg md:text-xl text-neutral-600 dark:text-neutral-400 mb-10 max-w-2xl mx-auto"
+                            className="text-lg md:text-xl text-neutral-600 dark:text-neutral-400 mb-10 max-w-xl"
                         >
                             {subtitle}
                         </motion.p>
@@ -201,7 +202,7 @@ export function BackgroundPaths({
                         overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300"
                     >
                         {buttonHref ? (
-                            <a href={buttonHref}>{buttonContent}</a>
+                            <Link href={buttonHref}>{buttonContent}</Link>
                         ) : (
                             buttonContent
                         )}

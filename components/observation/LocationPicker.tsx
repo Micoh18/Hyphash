@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import { useI18n } from "@/hooks/useI18n";
 
 interface LocationPickerProps {
   gpsLat: number;
@@ -37,6 +38,7 @@ export function LocationPicker({
   const boundaryRef = useRef<L.Circle | null>(null);
   const [ready, setReady] = useState(false);
   const [outOfBounds, setOutOfBounds] = useState(false);
+  const { t } = useI18n();
 
   const radiusRef = useRef(radius);
   radiusRef.current = radius;
@@ -108,7 +110,7 @@ export function LocationPicker({
         weight: 2,
       })
         .addTo(map)
-        .bindTooltip("Your position", { direction: "top", offset: [0, -8] });
+        .bindTooltip(t("location.your_position"), { direction: "top", offset: [0, -8] });
 
       // Place pin if already set
       if (pinLat !== null && pinLng !== null) {
@@ -227,18 +229,17 @@ export function LocationPicker({
         )}
         {outOfBounds && (
           <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[1000] px-3 py-1.5 bg-red-500 text-white text-xs font-medium rounded-lg shadow-lg">
-            Outside allowed area
+            {t("location.outside_area")}
           </div>
         )}
       </div>
       <p className="text-xs text-[var(--muted-foreground)]">
-        Click inside the circle to set the exact location. Drag the pin to
-        adjust.
+        {t("location.instruction")}
       </p>
 
       <div>
         <label className="block text-sm font-medium text-[var(--foreground)] mb-1.5">
-          Allowed radius
+          {t("location.allowed_radius")}
         </label>
         <div className="flex gap-1.5 flex-wrap">
           {RADIUS_OPTIONS.map((opt) => (
@@ -257,7 +258,7 @@ export function LocationPicker({
           ))}
         </div>
         <p className="text-xs text-[var(--muted-foreground)] mt-1">
-          You can only place the pin within this distance from your GPS position.
+          {t("location.radius_hint")}
         </p>
       </div>
     </div>

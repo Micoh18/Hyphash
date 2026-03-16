@@ -479,6 +479,87 @@ export const en = {
   "info.habitat": "The broader environment where you found the mushroom — type of forest, grassland, garden, etc.",
   "info.growth_pattern": "How are the mushrooms arranged? A single one (alone), a tight bunch (cluster), a fairy ring, or randomly scattered?",
   "info.spore_print": "A spore print is made by placing the cap gill-side down on paper for a few hours. The spores drop and leave a colored print — very useful for ID.",
+
+  // Footer
+  "footer.description": "A community-driven platform for documenting and identifying wild fungi. Open source, ad-free, and built by mycologists for everyone.",
+  "footer.product": "Product",
+  "footer.resources": "Resources",
+  "footer.community": "Community",
+  "footer.github": "GitHub",
+  "footer.privacy": "Privacy Policy",
+  "footer.terms": "Terms of Service",
+  "footer.discussions": "Discussions",
+  "footer.contributing": "Contributing",
+  "footer.copyright": "© 2024 Mycelium. Open source under MIT license.",
+  "footer.open_source_badge": "Open Source",
+
+  // 404
+  "notfound.title": "Lost in the mycelium",
+  "notfound.subtitle": "This page doesn't exist — but there's plenty to explore.",
+  "notfound.go_home": "Go Home",
+  "notfound.go_map": "Explore Map",
+
+  // Mission section (Why Fungi Matter)
+  "landing.mission_title": "Why fungi matter",
+  "landing.mission_p1": "Fungi are the hidden architects of nearly every ecosystem on Earth. They decompose organic matter, form symbiotic networks with plants, and produce compounds that sustain entire food webs. Yet we've barely scratched the surface of understanding them.",
+  "landing.mission_p2": "Citizen science has the power to change that. Every observation — even a single photo with a location and description — adds a data point to our collective understanding of the fungal kingdom.",
+  "landing.fact1_number": "90%",
+  "landing.fact1_label": "Undocumented",
+  "landing.fact1_desc": "An estimated 90% of fungal species have never been formally described by science.",
+  "landing.fact2_number": "25%",
+  "landing.fact2_label": "Of soil life",
+  "landing.fact2_desc": "Fungi make up roughly 25% of Earth's soil biomass, forming vast underground networks.",
+  "landing.fact3_number": "6x",
+  "landing.fact3_label": "More than plants",
+  "landing.fact3_desc": "There are an estimated 6 times more fungal species than plant species on Earth.",
+
+  // Built Different section
+  "landing.different_title": "Built different",
+  "landing.different_subtitle": "Mycelium isn't another general biodiversity app. It's purpose-built for the unique challenges of fungi documentation.",
+  "landing.diff1_title": "Fungi-only focus",
+  "landing.diff1_desc": "No birds, no plants — just fungi. A dedicated platform means better tools, better community, and better science.",
+  "landing.diff2_title": "Description-deep",
+  "landing.diff2_desc": "Guided forms capture cap, gills, stem, smell, and habitat — the morphological details that actually matter for identification.",
+  "landing.diff3_title": "Decentralized & open",
+  "landing.diff3_desc": "Open source, open data. Observations can be stored on IPFS and minted on Stellar for permanent, verifiable provenance.",
+
+  // Recent Activity / Founding
+  "landing.recent_title": "Recent observations",
+  "landing.recent_empty": "No observations yet. Be the first explorer.",
+  "landing.recent_cta": "Record your first observation",
+  "landing.founding_title": "Join the founding community",
+  "landing.founding_desc": "Mycelium is just getting started. Early observers shape how the platform grows — your contributions matter more now than ever.",
+  "landing.founding_cta": "Be a founding observer",
+
+  // About page
+  "about.title": "About Mycelium",
+  "about.mission_title": "Our mission",
+  "about.mission_p1": "Mycelium exists to build the most detailed, open, and community-driven map of the fungal world. We believe that fungi are vastly underrepresented in biodiversity databases, and that the best way to change that is to give people the tools to document what they find.",
+  "about.mission_p2": "We're building a platform where every observation — from a casual walk in the park to a deep-woods expedition — contributes to a shared understanding of fungal biodiversity.",
+  "about.story_title": "The story",
+  "about.story_p1": "Mycelium started as a simple idea: what if there was a dedicated space for fungi observations that went beyond just a photo? A place that taught people what to look for, captured the morphological details that matter, and built a community around collective identification.",
+  "about.opensource_title": "Open source",
+  "about.opensource_desc": "Mycelium is fully open source. The code, the data model, and the community guidelines are all developed in the open. We believe transparency builds trust, and trust builds better science.",
+  "about.community_title": "Community",
+  "about.community_desc": "Every observation, every identification suggestion, every discussion thread — it all comes from the community. Mycelium is built by mycologists, foragers, students, and curious walkers. Everyone is welcome.",
+
+  // Privacy page
+  "privacy.title": "Privacy Policy",
+  "privacy.intro": "Mycelium respects your privacy. This policy explains what data we collect and how we use it.",
+  "privacy.data_title": "What we collect",
+  "privacy.data_desc": "Observations you submit (including photos, location, and descriptions) are public by default. We store your wallet address for identity purposes. We do not sell or share your personal data with third parties.",
+  "privacy.location_title": "Location data",
+  "privacy.location_desc": "GPS coordinates are attached to observations only when you explicitly choose to share your location. You can adjust the pin on the map for privacy.",
+  "privacy.updated": "Last updated: March 2025",
+
+  // Terms page
+  "terms.title": "Terms of Service",
+  "terms.intro": "By using Mycelium, you agree to these terms. Mycelium is an open, community-driven platform for documenting fungi.",
+  "terms.usage_title": "Acceptable use",
+  "terms.usage_desc": "You agree to submit only genuine observations. Do not upload inappropriate content, spam, or deliberately misleading identifications. Community moderators may remove content that violates these guidelines.",
+  "terms.content_title": "Your content",
+  "terms.content_desc": "Observations you submit are public and contribute to an open dataset. By submitting, you grant a license for the community to use, discuss, and build upon your observations.",
+  "terms.updated": "Last updated: March 2025",
 } as const;
 
 export type TranslationKey = keyof typeof en;
