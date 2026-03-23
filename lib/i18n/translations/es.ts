@@ -94,6 +94,9 @@ export const es: Record<TranslationKey, string> = {
   "feed.oldest_first": "Más antiguas primero",
   "feed.all": "Todas",
   "feed.no_results": "Ninguna observación coincide con tus filtros.",
+  "feed.needs_id": "Necesita identificación",
+  "feed.active_discussions": "Discusiones activas",
+  "feed.identified": "Identificados",
 
   // Map
   "map.near_me": "Cerca de mí",
@@ -108,6 +111,9 @@ export const es: Record<TranslationKey, string> = {
   "form.step_appearance": "Apariencia",
   "form.step_environment": "Entorno",
   "form.step_id_notes": "ID y Notas",
+  "form.essentials_hint": "Empieza con dónde y cuándo lo encontraste, y añade al menos una foto.",
+  "form.describe_hint": "Describe lo que ves. Solo rellena lo que notes — todo es opcional.",
+  "form.environment_hint": "¿Dónde crecía? Esto ayuda a acotar la identificación.",
   "form.date_observed": "Fecha de observación",
   "form.location": "Ubicación",
   "form.getting_location": "Obteniendo ubicación...",
@@ -241,6 +247,8 @@ export const es: Record<TranslationKey, string> = {
   "profile.anonymous": "Anónimo",
   "profile.joined": "Se unió",
   "profile.no_observations": "Aún no hay observaciones",
+  "profile.explored": "Explorado",
+  "profile.species_documented": "Especies documentadas",
 
   // Comments
   "comments.no_comments": "Aún no hay comentarios. ¡Sé el primero en discutir!",

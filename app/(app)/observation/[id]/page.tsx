@@ -1,18 +1,18 @@
 "use client";
 
-import { use } from "react";
+import { use, useEffect, useMemo } from "react";
 import { useObservations } from "@/hooks/useObservations";
-import { useWallet } from "@/hooks/useWallet";
+import { useAuth } from "@/hooks/useAuth";
 import { useI18n } from "@/hooks/useI18n";
 import { PhotoGallery } from "@/components/observation/PhotoGallery";
 import { CommentThread } from "@/components/community/CommentThread";
 import { CommentInput } from "@/components/community/CommentInput";
 import { VerificationBadge } from "@/components/community/VerificationBadge";
 import { FlagButton } from "@/components/community/FlagButton";
-import { MOCK_COMMENTS } from "@/lib/mock-data";
+import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { useState } from "react";
-import type { Comment, CommentType } from "@/types";
+import type { Comment, CommentType, Profile } from "@/types";
 
 export default function ObservationPage({
   params,
@@ -20,26 +20,77 @@ export default function ObservationPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
-  const { getById } = useObservations();
-  const { profile } = useWallet();
+  const supabase = useMemo(() => createClient(), []);
+  const { getById, refresh } = useObservations();
+  const { profile } = useAuth();
   const { t } = useI18n();
   const observation = getById(id);
 
-  const [comments, setComments] = useState<Comment[]>(
-    MOCK_COMMENTS.filter((c) => c.observation_id === id)
-  );
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [consensusStatus, setConsensusStatus] = useState<string | null>(null);
+  const [minting, setMinting] = useState(false);
+  const [mintError, setMintError] = useState<string | null>(null);
+
+  const isObserver = profile?.id === observation?.observer_id;
+
+  const handleMint = async () => {
+    if (!observation) return;
+    setMinting(true);
+    setMintError(null);
+    try {
+      const res = await fetch("/api/nft/mint", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ observationId: observation.id }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setMintError(data.error ?? "Minting failed");
+      } else {
+        refresh();
+      }
+    } catch {
+      setMintError("Network error");
+    } finally {
+      setMinting(false);
+    }
+  };
+
+  // Fetch comments from Supabase
+  useEffect(() => {
+    async function fetchComments() {
+      const { data } = await supabase
+        .from("comments")
+        .select("*, author:profiles!author_id(*)")
+        .eq("observation_id", id)
+        .order("created_at", { ascending: true });
+      if (data) {
+        setComments(
+          data.map((c) => ({
+            ...c,
+            author: c.author as Profile | undefined,
+          })) as Comment[]
+        );
+      }
+    }
+    fetchComments();
+  }, [id]);
 
   if (!observation) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--background)]">
         <div className="text-center">
-          <div className="text-4xl mb-4">🍄</div>
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="mx-auto mb-4 text-[var(--muted-foreground)] opacity-40">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
+            <path d="M8 11h6" />
+          </svg>
           <p className="text-[var(--foreground)] font-medium">
             {t("detail.not_found")}
           </p>
           <Link
             href="/map"
-            className="text-sm text-emerald-600 hover:text-emerald-700 mt-2 block"
+            className="text-sm text-forest hover:text-forest-light mt-2 block"
           >
             {t("common.back_to_map")}
           </Link>
@@ -53,13 +104,13 @@ export default function ObservationPage({
     observation.proposed_species ??
     t("common.unknown_species");
 
-  const handleAddComment = (
+  const handleAddComment = async (
     body: string,
     type: CommentType,
     suggestedSpecies?: string
   ) => {
     const newComment: Comment = {
-      id: `c-${Date.now()}`,
+      id: crypto.randomUUID(),
       observation_id: id,
       author_id: profile?.id ?? "anonymous",
       body,
@@ -68,7 +119,34 @@ export default function ObservationPage({
       created_at: new Date().toISOString(),
       author: profile ?? undefined,
     };
+    // Optimistic update
     setComments((prev) => [...prev, newComment]);
+
+    // Persist to Supabase
+    await supabase.from("comments").insert({
+      observation_id: id,
+      author_id: profile?.id,
+      body,
+      comment_type: type,
+      suggested_species: suggestedSpecies || null,
+    });
+
+    // Server handles all status transitions (unverified→discussing, discussing→community_id)
+    try {
+      const res = await fetch("/api/consensus/check", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ observationId: id }),
+      });
+      const data = await res.json();
+
+      if (data.consensus && !data.alreadyMinted) {
+        setConsensusStatus("verified");
+      }
+      refresh();
+    } catch (err) {
+      console.error("Consensus check failed:", err);
+    }
   };
 
   const detailRows: Array<{ label: string; value: string | null | undefined }> =
@@ -201,7 +279,7 @@ export default function ObservationPage({
         <div className="flex items-center gap-3 text-sm text-[var(--muted-foreground)]">
           <Link
             href={`/profile/${observation.observer?.stellar_address ?? ""}`}
-            className="font-medium text-[var(--foreground)] hover:text-emerald-600"
+            className="font-medium text-[var(--foreground)] hover:text-forest"
           >
             {observation.observer?.username ?? t("common.anonymous")}
           </Link>
@@ -212,6 +290,68 @@ export default function ObservationPage({
             {observation.latitude.toFixed(4)}, {observation.longitude.toFixed(4)}
           </span>
         </div>
+
+        {/* Mint banner: observer can claim their NFT */}
+        {observation.status === "community_id" && !observation.nft_tx_hash && (
+          <div className="p-4 rounded-xl bg-spore/10 border border-spore/20">
+            <div className="flex items-center gap-2 mb-2">
+              <svg className="w-5 h-5 text-spore" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span className="text-sm font-semibold text-spore">Community verified</span>
+            </div>
+
+            {isObserver ? (
+              <div>
+                <button
+                  onClick={handleMint}
+                  disabled={minting}
+                  className="w-full py-2.5 bg-spore text-white rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
+                >
+                  {minting ? "Minting..." : "Claim your NFT on Stellar"}
+                </button>
+                {mintError && (
+                  <p className="text-xs text-red-500 mt-1">{mintError}</p>
+                )}
+              </div>
+            ) : (
+              <p className="text-xs text-[var(--muted-foreground)]">
+                The observer can claim their NFT for this verified observation.
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Consensus just reached notification */}
+        {consensusStatus === "verified" && observation.status !== "community_id" && (
+          <div className="p-3 rounded-xl bg-forest/10 border border-forest/20 text-sm font-medium flex items-center gap-2 text-forest">
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Community consensus reached!
+          </div>
+        )}
+
+        {/* Already minted badge */}
+        {observation.nft_tx_hash && (
+          <div className="p-3 rounded-xl bg-forest/10 border border-forest/20 text-sm flex items-center gap-2">
+            <svg className="w-4 h-4 text-forest" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span className="text-forest font-medium">On-chain</span>
+            {observation.nft_asset_code && (
+              <span className="text-xs text-forest/60 font-mono">{observation.nft_asset_code}</span>
+            )}
+            <a
+              href={`https://stellar.expert/explorer/testnet/tx/${observation.nft_tx_hash}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-forest/70 hover:text-forest underline ml-auto text-xs"
+            >
+              View on Stellar
+            </a>
+          </div>
+        )}
 
         {observation.notes && (
           <div className="p-4 rounded-xl bg-[var(--card)] border border-[var(--border)]">
@@ -226,7 +366,7 @@ export default function ObservationPage({
             <h3 className="text-sm font-semibold text-[var(--foreground)] mb-2">
               {t("detail.description")}
             </h3>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5">
               {filledDetails.map((d) => (
                 <div key={d.label} className="flex justify-between text-sm">
                   <span className="text-[var(--muted-foreground)]">{d.label}</span>
@@ -244,7 +384,7 @@ export default function ObservationPage({
             <h3 className="text-sm font-semibold text-violet-700 mb-2">
               {t("detail.advanced_description")}
             </h3>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 pl-3 border-l-2 border-violet-200">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5 pl-3 border-l-2 border-violet-200">
               {advancedRows.filter((d) => d.value).map((d) => (
                 <div key={d.label} className="flex justify-between text-sm">
                   <span className="text-[var(--muted-foreground)]">{d.label}</span>

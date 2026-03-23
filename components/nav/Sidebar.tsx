@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useWallet } from "@/hooks/useWallet";
+import { useAuth } from "@/hooks/useAuth";
 import { useI18n } from "@/hooks/useI18n";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { useState } from "react";
@@ -41,15 +41,16 @@ const NAV_ITEMS: { href: string; labelKey: TranslationKey; icon: React.ReactNode
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { connected, address, profile, connecting, error, connect, disconnect } = useWallet();
+  const { user, profile, signOut } = useAuth();
   const { t } = useI18n();
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
 
   return (
     <>
       <button
         onClick={() => setCollapsed(!collapsed)}
-        className="fixed top-4 left-4 z-[1100] md:hidden bg-[var(--card)] border border-[var(--border)] rounded-lg p-2 shadow-sm"
+        aria-label="Toggle navigation"
+        className="fixed top-4 left-4 z-[1100] md:hidden bg-[var(--card)] border border-[var(--border)] rounded-lg p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center shadow-sm"
       >
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           {collapsed ? (
@@ -68,6 +69,8 @@ export function Sidebar() {
       )}
 
       <aside
+        role="navigation"
+        aria-label="Main navigation"
         className={`fixed top-0 left-0 h-full z-[1050] w-64 bg-[var(--card)] border-r border-[var(--border)] flex flex-col transition-transform duration-200 ${
           collapsed ? "-translate-x-full" : "translate-x-0"
         } md:translate-x-0 md:static md:z-auto`}
@@ -90,9 +93,10 @@ export function Sidebar() {
                 key={item.href}
                 href={item.href}
                 onClick={() => setCollapsed(true)}
+                aria-current={active ? "page" : undefined}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                   active
-                    ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400"
+                    ? "bg-forest/10 text-forest dark:bg-forest/10 dark:text-moss-light"
                     : "text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)]"
                 }`}
               >
@@ -102,37 +106,38 @@ export function Sidebar() {
             );
           })}
 
-          {connected && address && (
+          {user && (
             <Link
-              href={`/profile/${address}`}
+              href={`/profile/${user.id}`}
               onClick={() => setCollapsed(true)}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 pathname.startsWith("/profile")
-                  ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400"
+                  ? "bg-forest/10 text-forest dark:bg-forest/10 dark:text-moss-light"
                   : "text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)]"
               }`}
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
               </svg>
               {t("nav.my_observations")}
             </Link>
           )}
         </nav>
 
-        {/* Language + Wallet */}
         <div className="px-3 py-3 border-t border-[var(--border)] space-y-3">
           <LanguageSwitcher />
-          {connected ? (
+          {user ? (
             <div className="space-y-2">
               <div className="px-3 py-2 rounded-lg bg-[var(--muted)]">
-                <p className="text-xs text-[var(--muted-foreground)]">{t("nav.connected")}</p>
                 <p className="text-sm font-medium text-[var(--foreground)] truncate">
-                  {profile?.username ?? `${address!.slice(0, 6)}...${address!.slice(-4)}`}
+                  {profile?.username ?? user.email?.split("@")[0] ?? "User"}
+                </p>
+                <p className="text-xs text-[var(--muted-foreground)] truncate">
+                  {user.email}
                 </p>
               </div>
               <button
-                onClick={disconnect}
+                onClick={signOut}
                 className="w-full px-3 py-2 text-sm text-[var(--muted-foreground)] hover:text-red-500 hover:bg-[var(--muted)] rounded-lg transition-colors text-left flex items-center gap-2"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -142,18 +147,12 @@ export function Sidebar() {
               </button>
             </div>
           ) : (
-            <div>
-              <button
-                onClick={connect}
-                disabled={connecting}
-                className="w-full px-3 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
-              >
-                {connecting ? t("nav.connecting") : t("nav.connect_wallet")}
-              </button>
-              {error && (
-                <p className="mt-2 text-xs text-red-500 px-1">{error}</p>
-              )}
-            </div>
+            <Link
+              href="/login"
+              className="block w-full px-3 py-2.5 bg-forest hover:bg-forest-light text-white rounded-lg text-sm font-medium transition-colors text-center"
+            >
+              {t("nav.connect_wallet")}
+            </Link>
           )}
         </div>
       </aside>

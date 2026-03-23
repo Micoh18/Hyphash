@@ -36,6 +36,7 @@ function NearMeButton() {
       disabled={locating}
       className="absolute bottom-24 right-4 z-[1000] bg-[var(--card)] text-[var(--foreground)] rounded-full w-12 h-12 flex items-center justify-center shadow-lg border border-[var(--border)] hover:bg-[var(--muted)] transition-colors"
       title={t("map.near_me")}
+      aria-label="Near me - find observations near your location"
     >
       {locating ? (
         <svg className="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none">
@@ -59,7 +60,7 @@ function ObservationPopup({ observation }: { observation: Observation }) {
   const statusColors: Record<string, string> = {
     unverified: "bg-gray-200 text-gray-700",
     discussing: "bg-amber-100 text-amber-800",
-    community_id: "bg-emerald-100 text-emerald-800",
+    community_id: "bg-forest/10 text-forest",
     unknown: "bg-violet-100 text-violet-800",
   };
 
@@ -82,7 +83,7 @@ function ObservationPopup({ observation }: { observation: Observation }) {
       )}
       <Link
         href={`/observation/${observation.id}`}
-        className="block mt-2 text-xs font-medium text-emerald-700 hover:text-emerald-900"
+        className="block mt-2 text-xs font-medium text-forest hover:text-forest-light"
       >
         {t("common.view_details")}
       </Link>
@@ -116,9 +117,9 @@ export default function FungiMap() {
   if (!ready || !MapContainer) {
     return (
       <div className="w-full h-full flex items-center justify-center bg-[var(--background)]" style={{ minHeight: "300px" }}>
-        <div className="text-center">
-          <div className="text-4xl mb-4">🍄</div>
-          <p className="text-[var(--muted-foreground)]">{t("common.loading_map")}</p>
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 rounded-full border-2 border-[var(--border)] border-t-forest animate-spin" />
+          <p className="text-sm text-[var(--muted-foreground)]">{t("common.loading_map")}</p>
         </div>
       </div>
     );
@@ -136,8 +137,8 @@ export default function FungiMap() {
         zoomControl={false}
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>'
+          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
         />
         {filteredObservations.map((obs) => (
           <Marker

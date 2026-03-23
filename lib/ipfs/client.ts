@@ -1,7 +1,8 @@
+import "server-only";
+
 /**
  * IPFS upload service via Pinata.
  * Requires PINATA_API_KEY and PINATA_SECRET_KEY env vars.
- * All functions are server-only (used in API routes).
  */
 
 const PINATA_API = "https://api.pinata.cloud";

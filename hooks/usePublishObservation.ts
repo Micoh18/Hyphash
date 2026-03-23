@@ -118,7 +118,7 @@ export function usePublishObservation() {
               : "Test SDF Network ; September 2015",
         });
       } catch {
-        // User rejected the signature — IPFS is done, NFT skipped
+        // User rejected the signature. IPFS is done, NFT skipped
         setState((s) => ({ ...s, step: "done" }));
         return { ipfsMetadataCid: ipfsData.metadataCid, nftTxHash: null };
       }

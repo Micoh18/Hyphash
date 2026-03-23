@@ -1,342 +1,344 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useMemo } from "react";
+import { motion } from "framer-motion";
 import { useI18n } from "@/hooks/useI18n";
 import { useObservations } from "@/hooks/useObservations";
-import { BackgroundPaths } from "@/components/ui/background-paths";
 import { Header } from "@/components/landing/Header";
 import { Footer } from "@/components/landing/Footer";
 import { RecentActivity } from "@/components/landing/RecentActivity";
 import Link from "next/link";
 import type { TranslationKey } from "@/lib/i18n/translations/en";
 
-function FadeInSection({
-  children,
-  className = "",
-  delay = 0,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  delay?: number;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.7, delay, ease: [0.21, 0.47, 0.32, 0.98] }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
+/* ─── Spore Print Animation ─── */
+/* Mimics a real esporada: dense powdery gill-lines radiating from a
+   central void (where the stem sat), with varying density per "gill sector",
+   irregular edges, and scattered spore particles. */
+
+function seededRandom(seed: number) {
+  const x = Math.sin(seed * 9301 + 49297) * 49297;
+  return x - Math.floor(x);
 }
 
-function FAQItem({ question, answer }: { question: string; answer: string }) {
-  const [open, setOpen] = useState(false);
+interface GillRay {
+  id: number;
+  angle: number;
+  innerR: number;
+  outerR: number;
+  width: number;
+  opacity: number;
+  curve: number;
+  delay: number;
+}
+
+
+function SporePrint() {
+  const cx = 500;
+  const cy = 500;
+  const stemR = 50; // void where stem sat
+  const gillCount = 480;
+
+  const gills = useMemo(() => {
+    // Simulate ~24 gill sectors with varying density
+    const sectorCount = 24;
+    const gillsArr: GillRay[] = [];
+
+    for (let i = 0; i < gillCount; i++) {
+      const r1 = seededRandom(i);
+      const r2 = seededRandom(i + 1000);
+      const r3 = seededRandom(i + 2000);
+      const r4 = seededRandom(i + 3000);
+      const r5 = seededRandom(i + 4000);
+
+      // Which sector this gill belongs to, creates visible "gaps"
+      const sector = Math.floor(i / (gillCount / sectorCount));
+      const sectorAngle = (sector / sectorCount) * Math.PI * 2;
+      // Jitter within sector
+      const sectorWidth = (Math.PI * 2) / sectorCount;
+      const angle = sectorAngle + (r1 - 0.5) * sectorWidth * 0.85;
+
+      // Inner radius: starts just outside the stem void
+      const innerR = stemR + 5 + r3 * 15;
+
+      // Outer radius: varies per ray, some gills extend further
+      const sectorReach = 0.75 + seededRandom(sector + 500) * 0.25; // each sector has different max reach
+      const baseOuter = 340 * sectorReach;
+      const outerR = baseOuter * (0.7 + r2 * 0.3);
+
+      // Width: most are very fine, some are thicker (mimics spore density)
+      const width = r5 < 0.85 ? 0.3 + r1 * 0.8 : 1.2 + r1 * 1.5;
+
+      // Opacity: denser near center, fading outward, varies per gill
+      const opacity = (0.2 + r2 * 0.5) * (r5 < 0.85 ? 1 : 0.6);
+
+      // Slight curve to simulate gill curvature
+      const curve = (r3 - 0.5) * 12;
+
+      gillsArr.push({
+        id: i,
+        angle,
+        innerR,
+        outerR,
+        width,
+        opacity,
+        curve,
+        delay: r4 * 2,
+      });
+    }
+
+    return gillsArr;
+  }, []);
+
+  function gillPath(g: GillRay) {
+    const cos = Math.cos(g.angle);
+    const sin = Math.sin(g.angle);
+    const x1 = cx + cos * g.innerR;
+    const y1 = cy + sin * g.innerR;
+    const x2 = cx + cos * g.outerR;
+    const y2 = cy + sin * g.outerR;
+    const mx = (x1 + x2) / 2 + -sin * g.curve;
+    const my = (y1 + y2) / 2 + cos * g.curve;
+    return `M${x1},${y1} Q${mx},${my} ${x2},${y2}`;
+  }
 
   return (
-    <div className="py-5">
-      <button
-        onClick={() => setOpen(!open)}
-        className="w-full flex items-start justify-between gap-4 text-left group"
+    <div className="absolute inset-0 pointer-events-none flex items-center justify-center translate-x-[15%] sm:translate-x-[20%] md:translate-x-[25%]">
+      <svg
+        className="w-[min(95vw,1000px)] h-[min(95vw,1000px)]"
+        viewBox="0 0 1000 1000"
+        fill="none"
       >
-        <span className="text-base md:text-lg font-medium text-neutral-900 dark:text-white group-hover:text-neutral-700 dark:group-hover:text-neutral-200 transition-colors">
-          {question}
-        </span>
-        <motion.span
-          animate={{ rotate: open ? 45 : 0 }}
-          transition={{ duration: 0.2 }}
-          className="flex-shrink-0 mt-1 w-5 h-5 flex items-center justify-center text-neutral-400"
-        >
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M7 1v12M1 7h12" />
-          </svg>
-        </motion.span>
-      </button>
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: [0.21, 0.47, 0.32, 0.98] }}
-            className="overflow-hidden"
-          >
-            <p className="pt-3 text-neutral-600 dark:text-neutral-400 leading-relaxed pr-10">
-              {answer}
-            </p>
-          </motion.div>
-        )}
-      </AnimatePresence>
+        <title>Spore Print</title>
+
+        {/* Gill rays */}
+        {gills.map((g) => (
+          <motion.path
+            key={`g-${g.id}`}
+            d={gillPath(g)}
+            stroke="var(--foreground)"
+            strokeWidth={g.width}
+            strokeLinecap="round"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: 1, opacity: g.opacity * 0.18 }}
+            transition={{
+              pathLength: {
+                duration: 4 + g.delay * 1.2,
+                delay: g.delay * 0.4,
+                ease: [0.25, 0.1, 0.25, 1],
+              },
+              opacity: {
+                duration: 1.5,
+                delay: g.delay * 0.4,
+                ease: "easeOut",
+              },
+            }}
+          />
+        ))}
+
+      </svg>
     </div>
   );
 }
 
+/* ─── Landing Page ─── */
 export default function LandingPage() {
   const { t } = useI18n();
   const { observations } = useObservations();
 
   const totalObservations = observations.length;
-  const verifiedCount = observations.filter(
-    (o) => o.status === "community_id"
-  ).length;
   const speciesSet = new Set(
     observations
       .map((o) => o.verified_species ?? o.proposed_species)
       .filter(Boolean)
   );
 
-  const steps = [
-    { number: t("landing.step1_number"), title: t("landing.step1_title"), desc: t("landing.step1_desc") },
-    { number: t("landing.step2_number"), title: t("landing.step2_title"), desc: t("landing.step2_desc") },
-    { number: t("landing.step3_number"), title: t("landing.step3_title"), desc: t("landing.step3_desc") },
-  ];
-
-  const features = [
-    { titleKey: "landing.feature1_title" as const, descKey: "landing.feature1_desc" as const },
-    { titleKey: "landing.feature2_title" as const, descKey: "landing.feature2_desc" as const },
-    { titleKey: "landing.feature3_title" as const, descKey: "landing.feature3_desc" as const },
-  ];
-
-  const stats = [
-    { value: totalObservations, label: t("landing.stats_observations") },
-    { value: speciesSet.size, label: t("landing.stats_species") },
-    { value: verifiedCount, label: t("landing.stats_community") },
-  ];
-
-  const facts = [
-    { number: t("landing.fact1_number"), label: t("landing.fact1_label"), desc: t("landing.fact1_desc") },
-    { number: t("landing.fact2_number"), label: t("landing.fact2_label"), desc: t("landing.fact2_desc") },
-    { number: t("landing.fact3_number"), label: t("landing.fact3_label"), desc: t("landing.fact3_desc") },
-  ];
-
-  const differentiators = [
-    { title: t("landing.diff1_title"), desc: t("landing.diff1_desc"), color: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800" },
-    { title: t("landing.diff2_title"), desc: t("landing.diff2_desc"), color: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800" },
-    { title: t("landing.diff3_title"), desc: t("landing.diff3_desc"), color: "bg-violet-500/10 text-violet-600 dark:text-violet-400 border-violet-200 dark:border-violet-800" },
-  ];
-
   return (
-    <div className="flex flex-col bg-white dark:bg-neutral-950">
+    <div className="flex flex-col min-h-screen bg-[var(--background)]">
       <Header />
 
       {/* Hero */}
-      <BackgroundPaths
-        title={t("common.mycelium")}
-        subtitle={t("landing.description")}
-        buttonText={t("landing.enter_app")}
-        buttonHref="/map"
-      />
+      <section className="relative min-h-[85vh] flex items-center overflow-hidden">
+        <SporePrint />
 
-      {/* Stats bar — conditional */}
-      {totalObservations >= 10 ? (
-        <section className="border-y border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50">
-          <div className="max-w-5xl mx-auto px-6 py-12 grid grid-cols-3 gap-8">
-            {stats.map((stat, i) => (
-              <FadeInSection key={stat.label} delay={i * 0.1} className="text-center">
-                <div className="text-4xl md:text-5xl font-bold tracking-tight text-neutral-900 dark:text-white">
-                  {stat.value}
-                </div>
-                <div className="mt-2 text-sm text-neutral-500 dark:text-neutral-400 font-medium uppercase tracking-wider">
-                  {stat.label}
-                </div>
-              </FadeInSection>
-            ))}
+        <div className="relative z-10 max-w-5xl mx-auto px-6 w-full">
+          <div className="max-w-xl">
+            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-[var(--foreground)] mb-6">
+              {t("common.mycelium")}
+            </h1>
+            <p className="text-lg md:text-xl text-[var(--muted-foreground)] leading-relaxed mb-8 max-w-md">
+              {t("landing.description")}
+            </p>
+
+            <Link
+              href="/map"
+              className="inline-flex items-center gap-2 px-7 py-3.5 bg-forest text-white rounded-xl text-sm font-semibold hover:bg-forest-light transition-colors"
+            >
+              {t("landing.enter_app")}
+              <span>&rarr;</span>
+            </Link>
+
+            {/* Stats */}
+            {totalObservations > 0 && (
+              <div className="flex items-center gap-6 mt-8 text-sm text-[var(--muted-foreground)]">
+                <span>
+                  <strong className="text-[var(--foreground)]">{totalObservations}</strong>{" "}
+                  {t("landing.stats_observations")}
+                </span>
+                <span className="w-px h-4 bg-[var(--border)]" />
+                <span>
+                  <strong className="text-[var(--foreground)]">{speciesSet.size}</strong>{" "}
+                  {t("landing.stats_species")}
+                </span>
+              </div>
+            )}
           </div>
-        </section>
-      ) : (
-        <section className="border-y border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50">
-          <div className="max-w-3xl mx-auto px-6 py-14 text-center">
-            <FadeInSection>
-              <h3 className="text-2xl md:text-3xl font-bold text-neutral-900 dark:text-white tracking-tight mb-3">
-                {t("landing.founding_title")}
+        </div>
+      </section>
+
+      {/* Value proposition */}
+      <section className="py-16 md:py-24 border-t border-[var(--border)]">
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="grid md:grid-cols-3 gap-10 md:gap-14">
+            <div>
+              <div className="w-8 h-8 rounded-lg bg-forest/10 flex items-center justify-center mb-4">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-forest">
+                  <path d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                </svg>
+              </div>
+              <h3 className="text-base font-semibold text-[var(--foreground)] mb-2">
+                {t("landing.feature1_title")}
               </h3>
-              <p className="text-neutral-500 dark:text-neutral-400 leading-relaxed mb-6 max-w-lg mx-auto">
-                {t("landing.founding_desc")}
+              <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
+                {t("landing.feature1_desc")}
               </p>
-              <Link
-                href="/observe"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-xl text-sm font-semibold hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-colors"
-              >
-                {t("landing.founding_cta")}
-                <span>&rarr;</span>
-              </Link>
-            </FadeInSection>
+            </div>
+            <div>
+              <div className="w-8 h-8 rounded-lg bg-mycelium/10 flex items-center justify-center mb-4">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-mycelium">
+                  <path d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
+                </svg>
+              </div>
+              <h3 className="text-base font-semibold text-[var(--foreground)] mb-2">
+                {t("landing.feature2_title")}
+              </h3>
+              <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
+                {t("landing.feature2_desc")}
+              </p>
+            </div>
+            <div>
+              <div className="w-8 h-8 rounded-lg bg-spore/15 flex items-center justify-center mb-4">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-spore">
+                  <path d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                </svg>
+              </div>
+              <h3 className="text-base font-semibold text-[var(--foreground)] mb-2">
+                {t("landing.feature3_title")}
+              </h3>
+              <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
+                {t("landing.feature3_desc")}
+              </p>
+            </div>
           </div>
-        </section>
-      )}
+        </div>
+      </section>
 
       {/* Recent Activity */}
       <RecentActivity />
 
-      {/* Features */}
-      <section className="py-24 md:py-32 bg-neutral-50 dark:bg-neutral-900/30">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="grid md:grid-cols-3 gap-8 md:gap-12">
-            {features.map((item, i) => (
-              <FadeInSection key={item.titleKey} delay={i * 0.12}>
-                <div className="group">
-                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 flex items-center justify-center mb-5">
-                    <div className="w-2 h-2 rounded-full bg-neutral-900 dark:bg-white" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-3">
-                    {t(item.titleKey)}
-                  </h3>
-                  <p className="text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                    {t(item.descKey)}
-                  </p>
-                </div>
-              </FadeInSection>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Why Fungi Matter */}
-      <section className="py-24 md:py-32">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-start">
-            <FadeInSection>
-              <div>
-                <h2 className="text-3xl md:text-5xl font-bold text-neutral-900 dark:text-white tracking-tight mb-8">
-                  {t("landing.mission_title")}
-                </h2>
-                <p className="text-neutral-600 dark:text-neutral-400 leading-relaxed mb-5">
-                  {t("landing.mission_p1")}
-                </p>
-                <p className="text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                  {t("landing.mission_p2")}
+      <section className="py-16 md:py-24 border-t border-[var(--border)]">
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="max-w-3xl mb-12 md:mb-16">
+            <h2 className="text-2xl md:text-3xl font-bold text-[var(--foreground)] tracking-tight mb-6">
+              {t("landing.mission_title")}
+            </h2>
+            <p className="text-[var(--muted-foreground)] leading-relaxed mb-4">
+              {t("landing.mission_p1")}
+            </p>
+            <p className="text-[var(--muted-foreground)] leading-relaxed">
+              {t("landing.mission_p2")}
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 md:gap-12">
+            {([
+              { num: "landing.fact1_number" as TranslationKey, label: "landing.fact1_label" as TranslationKey, desc: "landing.fact1_desc" as TranslationKey, color: "text-spore" },
+              { num: "landing.fact2_number" as TranslationKey, label: "landing.fact2_label" as TranslationKey, desc: "landing.fact2_desc" as TranslationKey, color: "text-moss" },
+              { num: "landing.fact3_number" as TranslationKey, label: "landing.fact3_label" as TranslationKey, desc: "landing.fact3_desc" as TranslationKey, color: "text-mycelium" },
+            ]).map((fact) => (
+              <div key={fact.label}>
+                <div className={`text-3xl md:text-4xl font-bold tracking-tight ${fact.color}`}>
+                  {t(fact.num)}
+                </div>
+                <div className="text-sm font-semibold text-[var(--foreground)] uppercase tracking-wider mt-1 mb-2">
+                  {t(fact.label)}
+                </div>
+                <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
+                  {t(fact.desc)}
                 </p>
               </div>
-            </FadeInSection>
-            <div className="space-y-4">
-              {facts.map((fact, i) => (
-                <FadeInSection key={fact.number} delay={i * 0.1}>
-                  <div className="p-6 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50">
-                    <div className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white tracking-tight">
-                      {fact.number}
-                    </div>
-                    <div className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider mt-1 mb-2">
-                      {fact.label}
-                    </div>
-                    <p className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed">
-                      {fact.desc}
-                    </p>
-                  </div>
-                </FadeInSection>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* How it works */}
-      <section className="py-24 md:py-32 bg-neutral-50 dark:bg-neutral-900/30">
-        <div className="max-w-5xl mx-auto px-6">
-          <FadeInSection>
-            <div className="text-center mb-16 md:mb-20">
-              <h2 className="text-3xl md:text-5xl font-bold text-neutral-900 dark:text-white tracking-tight mb-4">
-                {t("landing.how_title")}
-              </h2>
-              <p className="text-neutral-500 dark:text-neutral-400 text-lg max-w-xl mx-auto">
-                {t("landing.how_subtitle")}
-              </p>
-            </div>
-          </FadeInSection>
-
-          <div className="space-y-0">
-            {steps.map((step, i) => (
-              <FadeInSection key={step.number} delay={i * 0.1}>
-                <div className="group grid md:grid-cols-[80px_1fr] gap-6 md:gap-10 py-10 border-t border-neutral-200 dark:border-neutral-800 first:border-t-0">
-                  <div className="text-5xl md:text-6xl font-bold text-neutral-200 dark:text-neutral-800 group-hover:text-neutral-400 dark:group-hover:text-neutral-600 transition-colors duration-300 leading-none">
-                    {step.number}
-                  </div>
-                  <div>
-                    <h3 className="text-xl md:text-2xl font-semibold text-neutral-900 dark:text-white mb-3">
-                      {step.title}
-                    </h3>
-                    <p className="text-neutral-600 dark:text-neutral-400 leading-relaxed max-w-lg">
-                      {step.desc}
-                    </p>
-                  </div>
-                </div>
-              </FadeInSection>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Built Different */}
-      <section className="py-24 md:py-32">
-        <div className="max-w-6xl mx-auto px-6">
-          <FadeInSection>
-            <div className="text-center mb-16 md:mb-20">
-              <h2 className="text-3xl md:text-5xl font-bold text-neutral-900 dark:text-white tracking-tight mb-4">
-                {t("landing.different_title")}
-              </h2>
-              <p className="text-neutral-500 dark:text-neutral-400 text-lg max-w-2xl mx-auto">
-                {t("landing.different_subtitle")}
-              </p>
-            </div>
-          </FadeInSection>
-          <div className="grid md:grid-cols-3 gap-6 md:gap-8">
-            {differentiators.map((item, i) => (
-              <FadeInSection key={item.title} delay={i * 0.12}>
-                <div className={`p-8 rounded-2xl border ${item.color}`}>
-                  <h3 className="text-lg font-semibold mb-3">
-                    {item.title}
-                  </h3>
-                  <p className="text-sm leading-relaxed opacity-80">
-                    {item.desc}
-                  </p>
-                </div>
-              </FadeInSection>
             ))}
           </div>
         </div>
       </section>
 
       {/* FAQ */}
-      <section className="py-24 md:py-32 bg-neutral-50 dark:bg-neutral-900/30">
+      <section className="py-16 md:py-24 border-t border-[var(--border)]">
         <div className="max-w-3xl mx-auto px-6">
-          <FadeInSection>
-            <h2 className="text-3xl md:text-5xl font-bold text-neutral-900 dark:text-white tracking-tight mb-12 md:mb-16 text-center">
-              {t("landing.faq_title")}
-            </h2>
-          </FadeInSection>
-          <div className="divide-y divide-neutral-200 dark:divide-neutral-800">
-            {([1, 2, 3, 4, 5] as const).map((n, i) => (
-              <FadeInSection key={n} delay={i * 0.06}>
-                <FAQItem
-                  question={t(`landing.faq${n}_q` as TranslationKey)}
-                  answer={t(`landing.faq${n}_a` as TranslationKey)}
-                />
-              </FadeInSection>
+          <h2 className="text-2xl md:text-3xl font-bold text-[var(--foreground)] tracking-tight mb-10">
+            {t("landing.faq_title")}
+          </h2>
+          <div>
+            {([
+              { q: "landing.faq1_q" as TranslationKey, a: "landing.faq1_a" as TranslationKey },
+              { q: "landing.faq2_q" as TranslationKey, a: "landing.faq2_a" as TranslationKey },
+              { q: "landing.faq3_q" as TranslationKey, a: "landing.faq3_a" as TranslationKey },
+              { q: "landing.faq4_q" as TranslationKey, a: "landing.faq4_a" as TranslationKey },
+              { q: "landing.faq5_q" as TranslationKey, a: "landing.faq5_a" as TranslationKey },
+            ]).map((faq) => (
+              <details key={faq.q} className="group border-b border-[var(--border)]">
+                <summary className="py-5 cursor-pointer text-[var(--foreground)] font-medium text-base flex items-center justify-between gap-4">
+                  <span>{t(faq.q)}</span>
+                  <svg
+                    className="w-4 h-4 flex-shrink-0 text-[var(--muted-foreground)] transition-transform duration-200 group-open:rotate-180"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </summary>
+                <div className="pb-5 text-sm text-[var(--muted-foreground)] leading-relaxed pr-8">
+                  {t(faq.a)}
+                </div>
+              </details>
             ))}
           </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="py-24 md:py-32">
-        <div className="max-w-3xl mx-auto px-6 text-center">
-          <FadeInSection>
-            <h2 className="text-3xl md:text-5xl font-bold text-neutral-900 dark:text-white tracking-tight mb-6">
-              {t("landing.cta_title")}
-            </h2>
-            <p className="text-lg text-neutral-500 dark:text-neutral-400 mb-10 max-w-xl mx-auto leading-relaxed">
-              {t("landing.cta_desc")}
-            </p>
+      <section className="py-16 md:py-20 border-t border-[var(--border)]">
+        <div className="max-w-2xl mx-auto px-6 text-center">
+          <h2 className="text-2xl md:text-3xl font-bold text-[var(--foreground)] tracking-tight mb-4">
+            {t("landing.founding_title")}
+          </h2>
+          <p className="text-[var(--muted-foreground)] mb-8 max-w-md mx-auto">
+            {t("landing.founding_desc")}
+          </p>
+          <div className="flex items-center justify-center gap-4">
             <Link
-              href="/map"
-              className="inline-flex items-center gap-3 px-8 py-4 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-2xl text-lg font-semibold hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-colors shadow-xl shadow-neutral-900/10 dark:shadow-white/10"
+              href="/observe"
+              className="px-6 py-3 bg-forest text-white rounded-xl text-sm font-semibold hover:bg-forest-light transition-colors"
             >
-              {t("landing.cta_button")}
-              <span className="text-xl">&rarr;</span>
+              {t("landing.founding_cta")}
             </Link>
-          </FadeInSection>
+            <Link
+              href="/about"
+              className="px-6 py-3 text-sm font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+            >
+              {t("about.title")}
+            </Link>
+          </div>
         </div>
       </section>
 

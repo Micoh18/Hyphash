@@ -1,17 +1,20 @@
+import "server-only";
+
 /**
- * Stellar NFT minting service.
+ * Stellar NFT minting service (custodial).
  *
  * Strategy: Classic Stellar assets as 1-of-1 NFTs.
  * Each observation gets a unique asset code (e.g., "MYC0001") issued from
  * a dedicated issuer account. The issuer mints exactly 1 unit to the
- * observer's account, then locks the issuer so no more can ever be created.
+ * observer's custodial wallet, then the IPFS CID is stored on-chain.
  *
- * The asset's TOML home_domain points to the IPFS metadata.
+ * Both the issuer and observer keys are server-managed.
+ * The observer never needs to sign anything manually.
  *
  * Requires:
  * - STELLAR_ISSUER_SECRET env var (issuer account secret key)
  * - NEXT_PUBLIC_STELLAR_NETWORK env var ("testnet" or "public")
- * - Observer must have a Stellar account (via Freighter)
+ * - WALLET_ENCRYPTION_KEY env var (for decrypting observer keys)
  */
 
 import * as StellarSdk from "@stellar/stellar-sdk";
@@ -46,7 +49,6 @@ function getIssuerKeypair(): StellarSdk.Keypair {
  * Format: MYC + 9-char hash suffix.
  */
 export function generateAssetCode(observationId: string): string {
-  // Simple hash: take last 9 alphanumeric chars from a hash of the ID
   let hash = 0;
   for (let i = 0; i < observationId.length; i++) {
     hash = ((hash << 5) - hash + observationId.charCodeAt(i)) | 0;
@@ -56,41 +58,37 @@ export function generateAssetCode(observationId: string): string {
 }
 
 /**
- * Build an unsigned transaction that:
- * 1. The observer trusts the new asset
- * 2. The issuer sends 1 unit to the observer
- * 3. The issuer locks itself (no more minting)
+ * Build, sign (both sides), and submit the NFT mint transaction.
+ * Fully server-side: no client signing needed.
  *
- * The transaction is returned as XDR — needs to be signed by both
- * the issuer (server-side) and the observer (Freighter).
- *
- * We also attach the IPFS metadata CID as a manage_data operation.
+ * Returns the transaction hash and asset code on success.
  */
-export async function buildMintTransaction(params: {
+export async function mintNFT(params: {
   observerAddress: string;
+  observerSecret: string;
   observationId: string;
   metadataCid: string;
 }): Promise<{
-  xdr: string;
+  txHash: string;
   assetCode: string;
   issuerAddress: string;
 }> {
   const { url, passphrase } = getNetwork();
   const server = new StellarSdk.Horizon.Server(url);
   const issuerKeypair = getIssuerKeypair();
+  const observerKeypair = StellarSdk.Keypair.fromSecret(params.observerSecret);
   const issuerAddress = issuerKeypair.publicKey();
 
   const assetCode = generateAssetCode(params.observationId);
   const asset = new StellarSdk.Asset(assetCode, issuerAddress);
 
-  // Load the issuer account for sequence number
   const issuerAccount = await server.loadAccount(issuerAddress);
 
   const transaction = new StellarSdk.TransactionBuilder(issuerAccount, {
     fee: StellarSdk.BASE_FEE,
     networkPassphrase: passphrase,
   })
-    // 1. Observer trusts the asset (this op needs observer signature)
+    // 1. Observer trusts the asset
     .addOperation(
       StellarSdk.Operation.changeTrust({
         asset,
@@ -105,22 +103,25 @@ export async function buildMintTransaction(params: {
         amount: "1",
       })
     )
-    // 3. Store IPFS CID on-chain as manage_data
+    // 3. Store IPFS CID on-chain
     .addOperation(
       StellarSdk.Operation.manageData({
         name: `ipfs:${assetCode}`,
         value: params.metadataCid,
       })
     )
-    .setTimeout(300) // 5 minutes to sign
+    .setTimeout(300)
     .build();
 
-  // Sign with issuer key (server-side)
+  // Sign with both keys (fully server-side)
   transaction.sign(issuerKeypair);
+  transaction.sign(observerKeypair);
 
-  // Return partially signed XDR — observer must also sign via Freighter
+  // Submit to the network
+  const result = await server.submitTransaction(transaction);
+
   return {
-    xdr: transaction.toXDR(),
+    txHash: result.hash,
     assetCode,
     issuerAddress,
   };

@@ -16,9 +16,10 @@ export function MapFilters() {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className="bg-[var(--card)]/90 backdrop-blur rounded-xl shadow-sm border border-[var(--border)] overflow-hidden">
+    <div aria-label="Map filters" className="ml-14 md:ml-0 bg-[var(--card)]/90 backdrop-blur rounded-xl shadow-sm border border-[var(--border)] overflow-hidden">
       <button
         onClick={() => setExpanded(!expanded)}
+        aria-expanded={expanded}
         className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-[var(--foreground)] w-full"
       >
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -26,7 +27,7 @@ export function MapFilters() {
         </svg>
         {t("map.filters")}
         {filters.status !== "all" && (
-          <span className="ml-1 w-2 h-2 rounded-full bg-emerald-500" />
+          <span className="ml-1 w-2 h-2 rounded-full bg-moss" />
         )}
       </button>
 
@@ -39,7 +40,7 @@ export function MapFilters() {
                 onClick={() => setFilters({ ...filters, status: s })}
                 className={`px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${
                   filters.status === s
-                    ? "bg-emerald-600 text-white"
+                    ? "bg-forest text-white"
                     : "bg-[var(--muted)] text-[var(--muted-foreground)] hover:bg-[var(--border)]"
                 }`}
               >
@@ -62,7 +63,7 @@ export function MapFilters() {
             placeholder={t("map.search_species")}
             value={filters.species}
             onChange={(e) => setFilters({ ...filters, species: e.target.value })}
-            className="w-full px-3 py-1.5 text-xs rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            className="w-full px-3 py-1.5 text-xs rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:ring-1 focus:ring-moss"
           />
         </div>
       )}

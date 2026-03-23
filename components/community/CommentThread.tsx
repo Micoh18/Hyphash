@@ -6,7 +6,7 @@ import type { TranslationKey } from "@/lib/i18n/translations/en";
 
 const TYPE_STYLES: Record<string, { bg: string; labelKey: TranslationKey }> = {
   discussion: { bg: "bg-gray-100 text-gray-700", labelKey: "comments.discussion" },
-  agree: { bg: "bg-emerald-100 text-emerald-700", labelKey: "comments.agrees" },
+  agree: { bg: "bg-forest/10 text-forest", labelKey: "comments.agrees" },
   disagree: { bg: "bg-red-100 text-red-700", labelKey: "comments.disagrees" },
   suggest: { bg: "bg-violet-100 text-violet-700", labelKey: "comments.suggests" },
 };

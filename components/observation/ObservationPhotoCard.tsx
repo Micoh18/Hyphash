@@ -18,7 +18,7 @@ export function ObservationPhotoCard({ observation }: { observation: Observation
   return (
     <Link
       href={`/observation/${observation.id}`}
-      className="group block rounded-2xl overflow-hidden bg-[var(--card)] border border-[var(--border)] hover:border-emerald-300 transition-all duration-200 hover:shadow-lg"
+      className="group block rounded-2xl overflow-hidden bg-[var(--card)] border border-[var(--border)] hover:border-moss transition-all duration-200 hover:shadow-lg"
     >
       {/* Photo area */}
       <div className="aspect-square bg-[var(--muted)] relative overflow-hidden">

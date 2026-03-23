@@ -98,7 +98,7 @@ export function PhotoUpload({
         </p>
       </div>
 
-      <label className="block border-2 border-dashed border-[var(--border)] rounded-xl p-8 text-center cursor-pointer hover:border-emerald-400 hover:bg-emerald-50/50 transition-colors">
+      <label className="block border-2 border-dashed border-[var(--border)] rounded-xl p-8 text-center cursor-pointer hover:border-moss-light hover:bg-forest/10 transition-colors">
         <input
           type="file"
           accept="image/*"
@@ -143,7 +143,7 @@ export function PhotoUpload({
                   </div>
                 )}
                 {photo.validationStatus === "valid" && (
-                  <div className="absolute top-1 right-1 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center text-white text-[10px] font-bold">
+                  <div className="absolute top-1 right-1 w-5 h-5 bg-moss rounded-full flex items-center justify-center text-white text-[10px] font-bold">
                     ✓
                   </div>
                 )}

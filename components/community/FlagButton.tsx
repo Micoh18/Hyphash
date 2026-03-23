@@ -1,14 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { useWallet } from "@/hooks/useWallet";
+import { useAuth } from "@/hooks/useAuth";
 import { useObservations } from "@/hooks/useObservations";
 import { useI18n } from "@/hooks/useI18n";
 import { FlagModal } from "./FlagModal";
 import type { FlagReason } from "@/types";
 
 export function FlagButton({ observationId, observerId }: { observationId: string; observerId: string }) {
-  const { profile } = useWallet();
+  const { profile } = useAuth();
   const { flagObservation, hasUserFlagged } = useObservations();
   const { t } = useI18n();
   const [showModal, setShowModal] = useState(false);

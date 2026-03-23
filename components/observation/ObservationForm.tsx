@@ -3,13 +3,12 @@
 import { useState, useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { useWallet } from "@/hooks/useWallet";
+import { useAuth } from "@/hooks/useAuth";
 import { useObservations } from "@/hooks/useObservations";
 import { useGeolocation } from "@/hooks/useGeolocation";
 import { PhotoUpload } from "./PhotoUpload";
 import type { LocalPhoto } from "./PhotoUpload";
 import { useI18n } from "@/hooks/useI18n";
-import { usePublishObservation } from "@/hooks/usePublishObservation";
 import type { Observation, ObservationPhoto } from "@/types";
 import type { TranslationKey } from "@/lib/i18n/translations/en";
 
@@ -20,7 +19,10 @@ const LocationPicker = dynamic(
     ssr: false,
     loading: () => (
       <div className="w-full h-64 rounded-xl border border-[var(--border)] flex items-center justify-center bg-[var(--muted)]">
-        <p className="text-sm text-[var(--muted-foreground)]">Loading map...</p>
+        <div className="flex flex-col items-center gap-2">
+          <div className="w-8 h-8 rounded-full border-2 border-[var(--border)] border-t-forest animate-spin" />
+          <p className="text-sm text-[var(--muted-foreground)]">Loading map...</p>
+        </div>
       </div>
     ),
   }
@@ -44,16 +46,66 @@ import {
   SEASONS,
 } from "@/types";
 
-type Step = "location" | "appearance" | "environment" | "identification" | "photos";
+type Step = "essentials" | "describe" | "environment" | "identification";
 
 const STEPS: { key: Step; labelKey: TranslationKey }[] = [
-  { key: "location", labelKey: "form.step_location" },
-  { key: "photos", labelKey: "form.step_photos" },
-  { key: "appearance", labelKey: "form.step_appearance" },
+  { key: "essentials", labelKey: "form.step_location" },
+  { key: "describe", labelKey: "form.step_appearance" },
   { key: "environment", labelKey: "form.step_environment" },
   { key: "identification", labelKey: "form.step_id_notes" },
 ];
 
+/* ─── Mushroom Diagram ─── */
+function MushroomDiagram({ highlight }: { highlight?: "cap" | "underside" | "stem" | "flesh" }) {
+  return (
+    <svg viewBox="0 0 120 160" className="w-24 h-32 mx-auto mb-4" fill="none">
+      {/* Cap */}
+      <ellipse
+        cx="60" cy="50" rx="45" ry="28"
+        className={`transition-colors duration-200 ${
+          highlight === "cap" ? "fill-mycelium/30 stroke-mycelium" : "fill-[var(--muted)] stroke-[var(--border)]"
+        }`}
+        strokeWidth="2"
+      />
+      {/* Gills / underside */}
+      <path
+        d="M25 55 Q35 68 60 70 Q85 68 95 55"
+        className={`transition-colors duration-200 ${
+          highlight === "underside" ? "stroke-mycelium" : "stroke-[var(--border)]"
+        }`}
+        strokeWidth="1.5"
+        fill="none"
+      />
+      {/* Lines suggesting gills */}
+      {[35, 45, 55, 65, 75, 85].map((x) => (
+        <line
+          key={x}
+          x1={x} y1="52" x2={x + (x < 60 ? -3 : 3)} y2="65"
+          className={`transition-colors duration-200 ${
+            highlight === "underside" ? "stroke-mycelium/50" : "stroke-[var(--border)]"
+          }`}
+          strokeWidth="0.8"
+        />
+      ))}
+      {/* Stem */}
+      <rect
+        x="50" y="70" width="20" height="60" rx="4"
+        className={`transition-colors duration-200 ${
+          highlight === "stem" ? "fill-spore/30 stroke-spore" : "fill-[var(--muted)] stroke-[var(--border)]"
+        }`}
+        strokeWidth="2"
+      />
+      {/* Flesh cross-section indicator */}
+      {highlight === "flesh" && (
+        <line x1="30" y1="50" x2="90" y2="50" strokeWidth="2" strokeDasharray="4 3" className="stroke-cap-red/50" />
+      )}
+      {/* Ring */}
+      <ellipse cx="60" cy="85" rx="14" ry="3" className="stroke-[var(--border)]" strokeWidth="1" />
+    </svg>
+  );
+}
+
+/* ─── InfoTip (unchanged logic, cleaner) ─── */
 function InfoTip({ term }: { term: string }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -62,9 +114,7 @@ function InfoTip({ term }: { term: string }) {
   useEffect(() => {
     if (!open) return;
     const handleClickOutside = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -81,15 +131,15 @@ function InfoTip({ term }: { term: string }) {
         onClick={() => setOpen(!open)}
         className={`inline-flex items-center justify-center w-4 h-4 rounded-full text-[10px] font-bold leading-none transition-colors ${
           open
-            ? "bg-emerald-600 text-white"
-            : "bg-[var(--muted)] text-[var(--muted-foreground)] hover:bg-emerald-100 hover:text-emerald-700"
+            ? "bg-forest text-white"
+            : "bg-[var(--muted)] text-[var(--muted-foreground)] hover:bg-forest/10 hover:text-forest"
         }`}
         aria-label={`Info about ${term}`}
       >
         ?
       </button>
       {open && (
-        <div className="absolute left-0 top-6 z-20 w-64 p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 shadow-lg animate-in fade-in slide-in-from-top-1">
+        <div className="absolute left-0 top-6 z-20 w-64 p-3 rounded-lg bg-forest/10 border border-moss/30 text-xs text-forest shadow-lg">
           {info}
         </div>
       )}
@@ -97,17 +147,55 @@ function InfoTip({ term }: { term: string }) {
   );
 }
 
+/* ─── Collapsible Section ─── */
+function Section({
+  title,
+  children,
+  defaultOpen = false,
+  badge,
+}: {
+  title: string;
+  children: React.ReactNode;
+  defaultOpen?: boolean;
+  badge?: string;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div className="border border-[var(--border)] rounded-xl overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors"
+      >
+        <span className="flex items-center gap-2">
+          {title}
+          {badge && (
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-spore/20 text-mycelium font-medium">
+              {badge}
+            </span>
+          )}
+        </span>
+        <svg
+          className={`w-4 h-4 text-[var(--muted-foreground)] transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+          fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      {open && <div className="px-4 pb-4 space-y-4">{children}</div>}
+    </div>
+  );
+}
+
+/* ─── Main Form ─── */
 export function ObservationForm() {
   const router = useRouter();
-  const { connected, address, profile, error: walletError, connect } = useWallet();
+  const { user, profile } = useAuth();
   const { addObservation } = useObservations();
   const { t } = useI18n();
   const geo = useGeolocation();
-  const { step: publishStep, publish, error: publishError } = usePublishObservation();
-
-  const [step, setStep] = useState<Step>("location");
+  const [step, setStep] = useState<Step>("essentials");
   const [photos, setPhotos] = useState<LocalPhoto[]>([]);
-  const [publishOnChain, setPublishOnChain] = useState(false);
 
   // Location state
   const [showMapPicker, setShowMapPicker] = useState(false);
@@ -115,12 +203,12 @@ export function ObservationForm() {
   const [gpsLat, setGpsLat] = useState<number | null>(null);
   const [gpsLng, setGpsLng] = useState<number | null>(null);
 
-  // Form state — the actual pin position (defaults to GPS, refined via map)
+  // Form state
   const [lat, setLat] = useState<number | null>(null);
   const [lng, setLng] = useState<number | null>(null);
-  const [observedAt, setObservedAt] = useState(
-    new Date().toISOString().split("T")[0]
-  );
+  const [observedAt, setObservedAt] = useState(new Date().toISOString().split("T")[0]);
+
+  // Appearance: core (always visible)
   const [capShape, setCapShape] = useState("");
   const [capColor, setCapColor] = useState("");
   const [capSizeCm, setCapSizeCm] = useState<string>("");
@@ -134,16 +222,19 @@ export function ObservationForm() {
   const [fleshColor, setFleshColor] = useState("");
   const [bruiseColor, setBruiseColor] = useState("");
   const [smell, setSmell] = useState("");
+
+  // Environment
   const [substrate, setSubstrate] = useState("");
   const [habitat, setHabitat] = useState("");
   const [growthPattern, setGrowthPattern] = useState("");
   const [sporePrintColor, setSporePrintColor] = useState("");
+
+  // ID & notes
   const [proposedSpecies, setProposedSpecies] = useState("");
   const [confidence, setConfidence] = useState("");
   const [notes, setNotes] = useState("");
 
-  // Advanced fields
-  const [showAdvanced, setShowAdvanced] = useState(false);
+  // Advanced fields (collapsed by default)
   const [capMargin, setCapMargin] = useState("");
   const [gillAttachment, setGillAttachment] = useState("");
   const [gillSpacing, setGillSpacing] = useState("");
@@ -162,11 +253,8 @@ export function ObservationForm() {
 
   const currentStepIndex = STEPS.findIndex((s) => s.key === step);
 
-  const handleUseGPS = () => {
-    geo.locate();
-  };
+  const handleUseGPS = () => { geo.locate(); };
 
-  // Auto-fill GPS when it arrives
   useEffect(() => {
     if (geo.latitude && geo.longitude && gpsLat === null && gpsLng === null) {
       setGpsLat(geo.latitude);
@@ -179,10 +267,10 @@ export function ObservationForm() {
   const handleSubmit = async () => {
     if (!lat || !lng) return;
 
-    const id = `obs-${Date.now()}`;
+    const id = crypto.randomUUID();
     const observation: Observation = {
       id,
-      observer_id: profile?.id ?? "anonymous",
+      observer_id: user?.id ?? "anonymous",
       location: { lat, lng },
       latitude: lat,
       longitude: lng,
@@ -193,8 +281,8 @@ export function ObservationForm() {
       cap_surface: capSurface || null,
       underside_type: (undersideType as Observation["underside_type"]) || null,
       underside_color: undersideColor || null,
-      underside_spacing: null,
-      gill_attachment: null,
+      underside_spacing: gillSpacing || null,
+      gill_attachment: gillAttachment || null,
       stem_color: stemColor || null,
       stem_height_cm: stemHeightCm ? parseFloat(stemHeightCm) : null,
       stem_hollow: stemHollow,
@@ -228,7 +316,7 @@ export function ObservationForm() {
       updated_at: new Date().toISOString(),
       photos: photos.map(
         (p, i): ObservationPhoto => ({
-          id: `ph-${Date.now()}-${i}`,
+          id: crypto.randomUUID(),
           observation_id: id,
           storage_path: p.preview,
           photo_type: p.type,
@@ -241,27 +329,13 @@ export function ObservationForm() {
 
     addObservation(observation);
 
-    // Publish to IPFS + Stellar if opted in
-    if (publishOnChain && connected && address) {
-      const validPhotos = photos.filter((p) => p.validationStatus !== "invalid");
-      publish({
-        observationId: id,
-        observerAddress: address,
-        species: proposedSpecies || null,
-        location: { lat, lng },
-        observedAt,
-        notes: notes || null,
-        photos: validPhotos.map((p) => p.file),
-      });
-    }
-
     router.push("/map");
   };
 
   return (
     <div className="min-h-screen bg-[var(--background)]">
       {/* Header */}
-      <header className="sticky top-0 z-10 bg-[var(--card)]/90 backdrop-blur border-b border-[var(--border)] px-4 py-3">
+      <header className="sticky top-0 z-10 bg-[var(--card)] border-b border-[var(--border)] px-4 py-3">
         <div className="max-w-lg mx-auto flex items-center justify-between">
           <button
             onClick={() => router.push("/map")}
@@ -278,13 +352,14 @@ export function ObservationForm() {
 
       {/* Progress */}
       <div className="max-w-lg mx-auto px-4 pt-4">
-        <div className="flex gap-1">
+        <div className="flex gap-1" aria-label="Form progress">
           {STEPS.map((s, i) => (
             <button
               key={s.key}
               onClick={() => setStep(s.key)}
+              aria-label={t(s.labelKey)}
               className={`flex-1 h-1.5 rounded-full transition-colors ${
-                i <= currentStepIndex ? "bg-emerald-500" : "bg-[var(--border)]"
+                i <= currentStepIndex ? "bg-moss" : "bg-[var(--border)]"
               }`}
             />
           ))}
@@ -296,7 +371,7 @@ export function ObservationForm() {
               onClick={() => setStep(s.key)}
               className={`text-[10px] ${
                 step === s.key
-                  ? "text-emerald-600 font-medium"
+                  ? "text-forest font-medium"
                   : "text-[var(--muted-foreground)]"
               }`}
             >
@@ -307,24 +382,15 @@ export function ObservationForm() {
       </div>
 
       {/* Form content */}
-      <div className="max-w-lg mx-auto px-4 py-6">
-        {!connected && (
-          <div className="mb-6 p-4 rounded-xl bg-amber-50 border border-amber-200 text-sm text-amber-800">
-            <p className="font-medium mb-2">{t("form.connect_wallet_alert")}</p>
-            <button
-              onClick={connect}
-              className="px-4 py-1.5 bg-amber-600 text-white rounded-lg text-sm font-medium hover:bg-amber-700"
-            >
-              {t("nav.connect_wallet")}
-            </button>
-            {walletError && (
-              <p className="mt-2 text-xs text-red-600">{walletError}</p>
-            )}
-          </div>
-        )}
+      <div className="max-w-lg mx-auto px-4 py-6 pb-24">
+        {/* ─── Step 1: Essentials (location + photos combined) ─── */}
+        {step === "essentials" && (
+          <div className="space-y-5">
+            <p className="text-sm text-[var(--muted-foreground)]">
+              {t("form.essentials_hint") || "Start with where and when you found it, and add at least one photo."}
+            </p>
 
-        {step === "location" && (
-          <div className="space-y-4">
+            {/* Date */}
             <div>
               <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
                 {t("form.date_observed")}
@@ -337,39 +403,35 @@ export function ObservationForm() {
               />
             </div>
 
+            {/* Location */}
             <div>
               <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
                 {t("form.location")}
               </label>
-
-              {/* Step 1: Get GPS */}
               <button
                 onClick={handleUseGPS}
                 disabled={geo.loading}
-                className="w-full px-4 py-3 bg-emerald-50 border border-emerald-200 rounded-lg text-sm text-emerald-700 font-medium hover:bg-emerald-100 disabled:opacity-50 mb-2"
+                className="w-full px-4 py-3 bg-forest/10 border border-moss/30 rounded-lg text-sm text-forest font-medium hover:bg-moss/10 disabled:opacity-50 mb-2"
               >
                 {geo.loading
                   ? t("form.getting_location")
                   : gpsLat !== null
-                  ? `📍 ${t("form.gps_coordinates", { lat: gpsLat.toFixed(5), lng: gpsLng!.toFixed(5) })}`
-                  : `📍 ${t("form.get_gps")}`}
+                  ? t("form.gps_coordinates", { lat: gpsLat.toFixed(5), lng: gpsLng!.toFixed(5) })
+                  : t("form.get_gps")}
               </button>
-              {geo.error && (
-                <p className="text-xs text-red-500 mb-2">{geo.error}</p>
-              )}
+              {geo.error && <p className="text-xs text-red-500 mb-2">{geo.error}</p>}
 
-              {/* Step 2: Refine on map (only after GPS) */}
               {gpsLat !== null && gpsLng !== null && (
                 <>
                   <button
                     onClick={() => setShowMapPicker(!showMapPicker)}
                     className={`w-full px-4 py-2.5 rounded-lg text-sm font-medium border transition-colors mb-3 ${
                       showMapPicker
-                        ? "bg-emerald-600 text-white border-emerald-600"
+                        ? "bg-forest text-white border-forest"
                         : "bg-[var(--background)] text-[var(--foreground)] border-[var(--border)] hover:bg-[var(--muted)]"
                     }`}
                   >
-                    🗺️ {showMapPicker ? t("form.hide_map") : t("form.refine_on_map")}
+                    {showMapPicker ? t("form.hide_map") : t("form.refine_on_map")}
                   </button>
 
                   {showMapPicker && (
@@ -380,130 +442,107 @@ export function ObservationForm() {
                         pinLat={lat}
                         pinLng={lng}
                         radius={radius}
-                        onPinChange={(newLat, newLng) => {
-                          setLat(newLat);
-                          setLng(newLng);
-                        }}
+                        onPinChange={(newLat, newLng) => { setLat(newLat); setLng(newLng); }}
                         onRadiusChange={setRadius}
                       />
                     </div>
                   )}
 
-                  {/* Show final pin coordinates */}
                   {lat !== null && lng !== null && (
-                    <div className="px-3 py-2 rounded-lg bg-emerald-50 border border-emerald-200 text-sm text-emerald-700">
-                      📍 {t("form.pin_coordinates", { lat: lat.toFixed(5), lng: lng.toFixed(5) })}
+                    <div className="px-3 py-2 rounded-lg bg-forest/10 border border-moss/30 text-sm text-forest">
+                      {t("form.pin_coordinates", { lat: lat.toFixed(5), lng: lng.toFixed(5) })}
                     </div>
                   )}
                 </>
               )}
             </div>
+
+            {/* Photos */}
+            <div>
+              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                {t("form.step_photos")}
+              </label>
+              <PhotoUpload photos={photos} setPhotos={setPhotos} />
+            </div>
           </div>
         )}
 
-        {step === "photos" && (
-          <PhotoUpload photos={photos} setPhotos={setPhotos} />
-        )}
-
-        {step === "appearance" && (
+        {/* ─── Step 2: Describe what you see ─── */}
+        {step === "describe" && (
           <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-[var(--foreground)]">
-              {t("form.cap")} <InfoTip term="cap" />
-            </h2>
-            <SelectField label={t("form.shape")} value={capShape} onChange={setCapShape} options={[...CAP_SHAPES]} info="cap_shape" optionPrefix="cap_shape" />
-            <TextField label={t("form.color")} value={capColor} onChange={setCapColor} placeholder={t("form.color_placeholder")} />
-            <TextField label={t("form.size_cm")} value={capSizeCm} onChange={setCapSizeCm} placeholder={t("form.size_placeholder")} type="number" info="cap_size" />
-            <SelectField label={t("form.surface")} value={capSurface} onChange={setCapSurface} options={[...CAP_SURFACES]} info="cap_surface" optionPrefix="cap_surface" />
+            {/* Mushroom diagram */}
+            <MushroomDiagram />
+            <p className="text-sm text-[var(--muted-foreground)] text-center mb-2">
+              {t("form.describe_hint") || "Describe what you see. Only fill what you notice — everything is optional."}
+            </p>
 
-            <h2 className="text-lg font-semibold text-[var(--foreground)] pt-2">
-              {t("form.underside")} <InfoTip term="underside" />
-            </h2>
-            <SelectField label={t("form.type")} value={undersideType} onChange={setUndersideType} options={["gills", "pores", "teeth", "smooth"]} info="underside_type" optionPrefix="underside" />
-            <TextField label={t("form.color")} value={undersideColor} onChange={setUndersideColor} placeholder={t("form.underside_color_placeholder")} />
+            {/* Core fields */}
+            <Section title={t("form.cap")} defaultOpen={true} badge={capShape || capColor ? "filled" : undefined}>
+              <SelectField label={t("form.shape")} value={capShape} onChange={setCapShape} options={[...CAP_SHAPES]} info="cap_shape" optionPrefix="cap_shape" />
+              <TextField label={t("form.color")} value={capColor} onChange={setCapColor} placeholder={t("form.color_placeholder")} />
+              <SelectField label={t("form.surface")} value={capSurface} onChange={setCapSurface} options={[...CAP_SURFACES]} info="cap_surface" optionPrefix="cap_surface" />
+              <TextField label={t("form.size_cm")} value={capSizeCm} onChange={setCapSizeCm} placeholder={t("form.size_placeholder")} type="number" info="cap_size" />
+              <SelectField label={t("form.cap_margin")} value={capMargin} onChange={setCapMargin} options={[...CAP_MARGINS]} info="cap_margin" optionPrefix="cap_margin" />
+            </Section>
 
-            <h2 className="text-lg font-semibold text-[var(--foreground)] pt-2">
-              {t("form.stem")} <InfoTip term="stem" />
-            </h2>
-            <TextField label={t("form.color")} value={stemColor} onChange={setStemColor} placeholder={t("form.stem_color_placeholder")} />
-            <TextField label={t("form.height_cm")} value={stemHeightCm} onChange={setStemHeightCm} placeholder={t("form.height_placeholder")} type="number" />
-            <BooleanField label={t("form.hollow")} value={stemHollow} onChange={setStemHollow} info="stem_hollow" />
-            <BooleanField label={t("form.ring_present")} value={stemRing} onChange={setStemRing} info="stem_ring" />
+            <Section title={t("form.underside")} badge={undersideType ? "filled" : undefined}>
+              <SelectField label={t("form.type")} value={undersideType} onChange={setUndersideType} options={["gills", "pores", "teeth", "smooth"]} info="underside_type" optionPrefix="underside" />
+              <TextField label={t("form.color")} value={undersideColor} onChange={setUndersideColor} placeholder={t("form.underside_color_placeholder")} />
+              <SelectField label={t("form.gill_attachment")} value={gillAttachment} onChange={setGillAttachment} options={[...GILL_ATTACHMENTS]} info="gill_attachment" optionPrefix="gill_attachment" />
+              <SelectField label={t("form.gill_spacing")} value={gillSpacing} onChange={setGillSpacing} options={[...GILL_SPACINGS]} info="gill_spacing" optionPrefix="gill_spacing" />
+            </Section>
 
-            <h2 className="text-lg font-semibold text-[var(--foreground)] pt-2">
-              {t("form.flesh")} <InfoTip term="flesh" />
-            </h2>
-            <TextField label={t("form.flesh_color")} value={fleshColor} onChange={setFleshColor} placeholder={t("form.flesh_color_placeholder")} />
-            <TextField label={t("form.bruise_color")} value={bruiseColor} onChange={setBruiseColor} placeholder={t("form.bruise_color_placeholder")} info="bruise_color" />
+            <Section title={t("form.stem")} badge={stemColor ? "filled" : undefined}>
+              <TextField label={t("form.color")} value={stemColor} onChange={setStemColor} placeholder={t("form.stem_color_placeholder")} />
+              <TextField label={t("form.height_cm")} value={stemHeightCm} onChange={setStemHeightCm} placeholder={t("form.height_placeholder")} type="number" />
+              <BooleanField label={t("form.hollow")} value={stemHollow} onChange={setStemHollow} info="stem_hollow" />
+              <BooleanField label={t("form.ring_present")} value={stemRing} onChange={setStemRing} info="stem_ring" />
+              <SelectField label={t("form.stem_shape")} value={stemShape} onChange={setStemShape} options={[...STEM_SHAPES]} info="stem_shape" optionPrefix="stem_shape" />
+              <SelectField label={t("form.stem_surface")} value={stemSurface} onChange={setStemSurface} options={[...STEM_SURFACES]} info="stem_surface" optionPrefix="stem_surface" />
+              <SelectField label={t("form.stem_base")} value={stemBase} onChange={setStemBase} options={[...STEM_BASES]} info="stem_base" optionPrefix="stem_base" />
+              <BooleanField label={t("form.has_volva")} value={hasVolva} onChange={setHasVolva} info="has_volva" />
+            </Section>
 
-            <h2 className="text-lg font-semibold text-[var(--foreground)] pt-2">
-              {t("form.smell")} <InfoTip term="smell_section" />
-            </h2>
-            <SelectField label={t("form.smell")} value={smell} onChange={setSmell} options={[...SMELLS]} optionPrefix="smell" />
+            <Section title={t("form.flesh")} badge={fleshColor || bruiseColor ? "filled" : undefined}>
+              <TextField label={t("form.flesh_color")} value={fleshColor} onChange={setFleshColor} placeholder={t("form.flesh_color_placeholder")} />
+              <TextField label={t("form.bruise_color")} value={bruiseColor} onChange={setBruiseColor} placeholder={t("form.bruise_color_placeholder")} info="bruise_color" />
+              <SelectField label={t("form.flesh_consistency")} value={fleshConsistency} onChange={setFleshConsistency} options={[...FLESH_CONSISTENCIES]} info="flesh_consistency" optionPrefix="flesh_consistency" />
+              <SelectField label={t("form.color_change")} value={colorChange} onChange={setColorChange} options={[...COLOR_CHANGES]} info="color_change" optionPrefix="color_change" />
+              <BooleanField label={t("form.has_latex")} value={hasLatex} onChange={setHasLatex} info="has_latex" />
+              {hasLatex && (
+                <TextField label={t("form.latex_color")} value={latexColor} onChange={setLatexColor} placeholder={t("form.latex_color_placeholder")} />
+              )}
+            </Section>
 
-            {/* Advanced appearance toggle */}
-            <button
-              type="button"
-              onClick={() => setShowAdvanced(!showAdvanced)}
-              className={`w-full mt-4 px-4 py-3 rounded-xl border text-sm font-medium transition-colors ${
-                showAdvanced
-                  ? "bg-violet-50 border-violet-300 text-violet-700"
-                  : "bg-[var(--muted)] border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
-              }`}
-            >
-              {showAdvanced ? "▾" : "▸"} {t("form.advanced_toggle")}
-              <span className="block text-xs font-normal opacity-70 mt-0.5">{t("form.advanced_hint")}</span>
-            </button>
-
-            {showAdvanced && (
-              <div className="space-y-4 pt-2 pl-3 border-l-2 border-violet-200">
-                <h3 className="text-sm font-semibold text-violet-700">{t("form.cap")} — {t("form.advanced_toggle")}</h3>
-                <SelectField label={t("form.cap_margin")} value={capMargin} onChange={setCapMargin} options={[...CAP_MARGINS]} info="cap_margin" optionPrefix="cap_margin" />
-
-                <h3 className="text-sm font-semibold text-violet-700 pt-2">{t("form.underside")} — {t("form.advanced_toggle")}</h3>
-                <SelectField label={t("form.gill_attachment")} value={gillAttachment} onChange={setGillAttachment} options={[...GILL_ATTACHMENTS]} info="gill_attachment" optionPrefix="gill_attachment" />
-                <SelectField label={t("form.gill_spacing")} value={gillSpacing} onChange={setGillSpacing} options={[...GILL_SPACINGS]} info="gill_spacing" optionPrefix="gill_spacing" />
-
-                <h3 className="text-sm font-semibold text-violet-700 pt-2">{t("form.stem")} — {t("form.advanced_toggle")}</h3>
-                <SelectField label={t("form.stem_shape")} value={stemShape} onChange={setStemShape} options={[...STEM_SHAPES]} info="stem_shape" optionPrefix="stem_shape" />
-                <SelectField label={t("form.stem_surface")} value={stemSurface} onChange={setStemSurface} options={[...STEM_SURFACES]} info="stem_surface" optionPrefix="stem_surface" />
-                <SelectField label={t("form.stem_base")} value={stemBase} onChange={setStemBase} options={[...STEM_BASES]} info="stem_base" optionPrefix="stem_base" />
-                <BooleanField label={t("form.has_volva")} value={hasVolva} onChange={setHasVolva} info="has_volva" />
-
-                <h3 className="text-sm font-semibold text-violet-700 pt-2">{t("form.flesh")} — {t("form.advanced_toggle")}</h3>
-                <SelectField label={t("form.flesh_consistency")} value={fleshConsistency} onChange={setFleshConsistency} options={[...FLESH_CONSISTENCIES]} info="flesh_consistency" optionPrefix="flesh_consistency" />
-                <SelectField label={t("form.color_change")} value={colorChange} onChange={setColorChange} options={[...COLOR_CHANGES]} info="color_change" optionPrefix="color_change" />
-                <BooleanField label={t("form.has_latex")} value={hasLatex} onChange={setHasLatex} info="has_latex" />
-                {hasLatex && (
-                  <TextField label={t("form.latex_color")} value={latexColor} onChange={setLatexColor} placeholder={t("form.latex_color_placeholder")} />
-                )}
-
-                <div className="pt-2">
-                  <SelectField label={t("form.taste")} value={taste} onChange={setTaste} options={[...TASTES]} info="taste" optionPrefix="taste" />
-                  <p className="text-xs text-amber-600 mt-1">{t("form.taste_warning")}</p>
-                </div>
-              </div>
-            )}
+            <Section title={t("form.smell")}>
+              <SelectField label={t("form.smell")} value={smell} onChange={setSmell} options={[...SMELLS]} optionPrefix="smell" />
+              <SelectField label={t("form.taste")} value={taste} onChange={setTaste} options={[...TASTES]} info="taste" optionPrefix="taste" />
+              <p className="text-xs text-amber-600">{t("form.taste_warning")}</p>
+            </Section>
           </div>
         )}
 
+        {/* ─── Step 3: Environment ─── */}
         {step === "environment" && (
           <div className="space-y-4">
+            <p className="text-sm text-[var(--muted-foreground)] mb-2">
+              {t("form.environment_hint") || "Where was it growing? This helps narrow identification."}
+            </p>
+
             <SelectField label={t("form.substrate")} value={substrate} onChange={setSubstrate} options={[...SUBSTRATES]} info="substrate" optionPrefix="substrate" />
             <SelectField label={t("form.habitat")} value={habitat} onChange={setHabitat} options={[...HABITATS]} info="habitat" optionPrefix="habitat" />
             <SelectField label={t("form.growth_pattern")} value={growthPattern} onChange={setGrowthPattern} options={["alone", "cluster", "ring", "scattered"]} info="growth_pattern" optionPrefix="growth" />
             <TextField label={t("form.spore_print_color")} value={sporePrintColor} onChange={setSporePrintColor} placeholder={t("form.spore_print_placeholder")} info="spore_print" />
 
-            {showAdvanced && (
-              <div className="space-y-4 pt-2 pl-3 border-l-2 border-violet-200 mt-4">
-                <h3 className="text-sm font-semibold text-violet-700">{t("form.step_environment")} — {t("form.advanced_toggle")}</h3>
-                <SelectField label={t("form.ecological_role")} value={ecologicalRole} onChange={setEcologicalRole} options={[...ECOLOGICAL_ROLES]} info="ecological_role" optionPrefix="ecological_role" />
-                <TextField label={t("form.associated_trees")} value={associatedTrees} onChange={setAssociatedTrees} placeholder={t("form.associated_trees_placeholder")} />
-                <SelectField label={t("form.season")} value={season} onChange={setSeason} options={[...SEASONS]} info="season" optionPrefix="season" />
-              </div>
-            )}
+            <Section title={t("form.advanced_toggle")}>
+              <SelectField label={t("form.ecological_role")} value={ecologicalRole} onChange={setEcologicalRole} options={[...ECOLOGICAL_ROLES]} info="ecological_role" optionPrefix="ecological_role" />
+              <TextField label={t("form.associated_trees")} value={associatedTrees} onChange={setAssociatedTrees} placeholder={t("form.associated_trees_placeholder")} />
+              <SelectField label={t("form.season")} value={season} onChange={setSeason} options={[...SEASONS]} info="season" optionPrefix="season" />
+            </Section>
           </div>
         )}
 
+        {/* ─── Step 4: Identification & Notes ─── */}
         {step === "identification" && (
           <div className="space-y-4">
             <TextField label={t("form.proposed_species")} value={proposedSpecies} onChange={setProposedSpecies} placeholder={t("form.proposed_species_placeholder")} />
@@ -520,37 +559,6 @@ export function ObservationForm() {
                 className="w-full px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] text-sm resize-none"
               />
             </div>
-
-            {/* Publish on-chain toggle */}
-            {connected && photos.length > 0 && (
-              <label className="flex items-start gap-3 p-4 rounded-xl border border-[var(--border)] bg-[var(--card)] cursor-pointer hover:border-violet-300 transition-colors">
-                <input
-                  type="checkbox"
-                  checked={publishOnChain}
-                  onChange={(e) => setPublishOnChain(e.target.checked)}
-                  className="mt-0.5 accent-violet-600"
-                />
-                <div>
-                  <p className="text-sm font-medium text-[var(--foreground)]">
-                    {t("publish.toggle_label")}
-                  </p>
-                  <p className="text-xs text-[var(--muted-foreground)] mt-0.5">
-                    {t("publish.toggle_description")}
-                  </p>
-                </div>
-              </label>
-            )}
-
-            {publishStep !== "idle" && publishStep !== "done" && (
-              <div className="p-3 rounded-lg bg-violet-50 border border-violet-200 text-sm text-violet-700">
-                {publishStep === "uploading_ipfs" && t("publish.uploading_ipfs")}
-                {publishStep === "minting_nft" && t("publish.minting_nft")}
-                {publishStep === "signing" && t("publish.signing")}
-                {publishStep === "error" && (
-                  <span className="text-red-600">{publishError}</span>
-                )}
-              </div>
-            )}
           </div>
         )}
 
@@ -562,7 +570,7 @@ export function ObservationForm() {
               if (prev) setStep(prev.key);
             }}
             disabled={currentStepIndex === 0}
-            className="px-4 py-2 text-sm font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] disabled:opacity-30"
+            className="px-4 py-2.5 text-sm font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] disabled:opacity-30"
           >
             {t("form.previous")}
           </button>
@@ -570,7 +578,7 @@ export function ObservationForm() {
           {currentStepIndex < STEPS.length - 1 ? (
             <button
               onClick={() => setStep(STEPS[currentStepIndex + 1].key)}
-              className="px-6 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700"
+              className="px-6 py-2.5 bg-forest text-white rounded-lg text-sm font-medium hover:bg-forest-light"
             >
               {t("form.next")}
             </button>
@@ -578,7 +586,7 @@ export function ObservationForm() {
             <button
               onClick={handleSubmit}
               disabled={!lat || !lng || photos.some((p) => p.validationStatus === "invalid" || p.validationStatus === "validating")}
-              className="px-6 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 disabled:opacity-50"
+              className="px-6 py-2.5 bg-forest text-white rounded-lg text-sm font-medium hover:bg-forest-light disabled:opacity-50"
             >
               {t("form.submit")}
             </button>
@@ -589,13 +597,10 @@ export function ObservationForm() {
   );
 }
 
+/* ─── Field Components ─── */
+
 function SelectField({
-  label,
-  value,
-  onChange,
-  options,
-  info,
-  optionPrefix,
+  label, value, onChange, options, info, optionPrefix,
 }: {
   label: string;
   value: string;
@@ -628,12 +633,7 @@ function SelectField({
 }
 
 function TextField({
-  label,
-  value,
-  onChange,
-  placeholder,
-  type = "text",
-  info,
+  label, value, onChange, placeholder, type = "text", info,
 }: {
   label: string;
   value: string;
@@ -660,10 +660,7 @@ function TextField({
 }
 
 function BooleanField({
-  label,
-  value,
-  onChange,
-  info,
+  label, value, onChange, info,
 }: {
   label: string;
   value: boolean | null;
@@ -689,7 +686,7 @@ function BooleanField({
             onClick={() => onChange(opt.val)}
             className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${
               value === opt.val
-                ? "bg-emerald-600 text-white border-emerald-600"
+                ? "bg-forest text-white border-forest"
                 : "bg-[var(--background)] text-[var(--foreground)] border-[var(--border)] hover:bg-[var(--muted)]"
             }`}
           >

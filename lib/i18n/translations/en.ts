@@ -92,6 +92,9 @@ export const en = {
   "feed.oldest_first": "Oldest first",
   "feed.all": "All",
   "feed.no_results": "No observations match your filters.",
+  "feed.needs_id": "Needs identification",
+  "feed.active_discussions": "Active discussions",
+  "feed.identified": "Identified",
 
   // Map
   "map.near_me": "Near me",
@@ -106,6 +109,9 @@ export const en = {
   "form.step_appearance": "Appearance",
   "form.step_environment": "Environment",
   "form.step_id_notes": "ID & Notes",
+  "form.essentials_hint": "Start with where and when you found it, and add at least one photo.",
+  "form.describe_hint": "Describe what you see. Only fill what you notice — everything is optional.",
+  "form.environment_hint": "Where was it growing? This helps narrow identification.",
   "form.date_observed": "Date observed",
   "form.location": "Location",
   "form.getting_location": "Getting location...",
@@ -239,6 +245,8 @@ export const en = {
   "profile.anonymous": "Anonymous",
   "profile.joined": "Joined",
   "profile.no_observations": "No observations yet",
+  "profile.explored": "Explored",
+  "profile.species_documented": "Species documented",
 
   // Comments
   "comments.no_comments": "No comments yet. Be the first to discuss!",

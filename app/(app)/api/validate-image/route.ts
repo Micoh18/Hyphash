@@ -6,14 +6,26 @@ import {
   CONFIDENCE_THRESHOLD,
 } from "@/lib/clip/singleton";
 import { RawImage } from "@huggingface/transformers";
+import { apiGuard } from "@/lib/api-guard";
+
+// 60 validations per minute per IP (image validation is lightweight-ish)
+const GUARD_CONFIG = { limit: 60, windowSeconds: 60, route: "validate-image" };
 
 export async function POST(request: Request) {
+  const guard = apiGuard(request, GUARD_CONFIG);
+  if (guard.blocked) return guard.response;
+
   try {
     const formData = await request.formData();
     const file = formData.get("image") as File | null;
 
     if (!file) {
       return NextResponse.json({ error: "No image provided" }, { status: 400 });
+    }
+
+    // Reject files over 10MB
+    if (file.size > 10 * 1024 * 1024) {
+      return NextResponse.json({ error: "File too large" }, { status: 400 });
     }
 
     const arrayBuffer = await file.arrayBuffer();
@@ -44,7 +56,6 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("Image validation error:", error);
-    // Graceful degradation — if CLIP fails, allow the upload
     return NextResponse.json({
       valid: true,
       confidence: 0,

@@ -48,7 +48,7 @@ export function LanguageSwitcher() {
               }}
               className={`flex items-center gap-2 px-3 py-2 text-sm w-full text-left transition-colors ${
                 locale === loc
-                  ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400"
+                  ? "bg-forest/10 text-forest dark:bg-forest/10 dark:text-moss-light"
                   : "text-[var(--foreground)] hover:bg-[var(--muted)]"
               }`}
             >

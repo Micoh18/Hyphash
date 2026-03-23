@@ -2,9 +2,13 @@
 
 @theme {
   --color-mycelium: #8B5E3C;
+  --color-mycelium-light: #A67B5B;
   --color-spore: #D4A574;
+  --color-spore-light: #E8C9A8;
   --color-forest: #2D5016;
+  --color-forest-light: #3D6B1E;
   --color-moss: #4A7C29;
+  --color-moss-light: #5D9934;
   --color-bark: #3E2723;
   --color-cap-red: #C62828;
   --color-cap-orange: #E65100;
@@ -21,10 +25,10 @@
   --muted-foreground: #6b6560;
   --primary: #2D5016;
   --primary-foreground: #ffffff;
-  --secondary: #f0ebe3;
-  --secondary-foreground: #1a1a1a;
-  --accent: #f0ebe3;
-  --accent-foreground: #1a1a1a;
+  --secondary: #D4A574;
+  --secondary-foreground: #3E2723;
+  --accent: #8B5E3C;
+  --accent-foreground: #ffffff;
   --destructive: #C62828;
   --destructive-foreground: #ffffff;
   --ring: #4A7C29;
@@ -34,23 +38,23 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #141210;
-    --foreground: #e8e0d8;
-    --card: #1e1b18;
-    --card-foreground: #e8e0d8;
-    --border: #2e2a25;
-    --muted: #252220;
-    --muted-foreground: #9a928a;
-    --primary: #4A7C29;
-    --primary-foreground: #ffffff;
-    --secondary: #252220;
-    --secondary-foreground: #e8e0d8;
-    --accent: #252220;
-    --accent-foreground: #e8e0d8;
-    --destructive: #ef4444;
-    --destructive-foreground: #ffffff;
-    --ring: #4A7C29;
-    --input: #2e2a25;
+    --background: #110f0d;
+    --foreground: #ede6de;
+    --card: #1a1714;
+    --card-foreground: #ede6de;
+    --border: #2c2620;
+    --muted: #211e1a;
+    --muted-foreground: #998e82;
+    --primary: #6aad3a;
+    --primary-foreground: #0d0c0a;
+    --secondary: #2c2117;
+    --secondary-foreground: #e0b88a;
+    --accent: #c49570;
+    --accent-foreground: #110f0d;
+    --destructive: #f87171;
+    --destructive-foreground: #1a0505;
+    --ring: #6aad3a;
+    --input: #2c2620;
   }
 }
 
@@ -65,6 +69,24 @@ body {
   margin: 0;
 }
 
+/* Skeleton shimmer animation */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--muted) 25%,
+    var(--border) 50%,
+    var(--muted) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+  border-radius: var(--radius);
+}
+
 /* Leaflet overrides */
 .leaflet-container {
   width: 100%;
@@ -75,11 +97,17 @@ body {
 .leaflet-popup-content-wrapper {
   border-radius: 12px !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+  background: var(--card) !important;
 }
 
 .leaflet-popup-content {
   margin: 0 !important;
   min-width: 200px;
+  color: var(--foreground);
+}
+
+.leaflet-popup-tip {
+  background: var(--card) !important;
 }
 
 .observation-popup {
@@ -106,4 +134,20 @@ body {
 
 .marker-pulse {
   animation: marker-pulse 2s ease-in-out infinite;
+}
+
+/* Hide default details marker for custom chevron */
+details summary::-webkit-details-marker {
+  display: none;
+}
+
+details summary {
+  list-style: none;
+}
+
+/* Global focus-visible ring for accessibility */
+*:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: var(--radius);
 }

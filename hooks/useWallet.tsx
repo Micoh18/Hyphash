@@ -7,12 +7,10 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
-import type { Profile } from "@/types";
 
 interface WalletState {
   connected: boolean;
   address: string | null;
-  profile: Profile | null;
   connecting: boolean;
   error: string | null;
   connect: () => Promise<void>;
@@ -22,7 +20,6 @@ interface WalletState {
 const WalletContext = createContext<WalletState>({
   connected: false,
   address: null,
-  profile: null,
   connecting: false,
   error: null,
   connect: async () => {},
@@ -31,7 +28,6 @@ const WalletContext = createContext<WalletState>({
 
 export function WalletProvider({ children }: { children: ReactNode }) {
   const [address, setAddress] = useState<string | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
   const [connecting, setConnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -50,13 +46,6 @@ export function WalletProvider({ children }: { children: ReactNode }) {
 
       const addr = await freighterApi.requestAccess();
       setAddress(addr);
-      setProfile({
-        id: crypto.randomUUID(),
-        stellar_address: addr,
-        username: null,
-        avatar_url: null,
-        created_at: new Date().toISOString(),
-      });
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Failed to connect wallet";
@@ -68,7 +57,6 @@ export function WalletProvider({ children }: { children: ReactNode }) {
 
   const disconnect = useCallback(() => {
     setAddress(null);
-    setProfile(null);
     setError(null);
   }, []);
 
@@ -77,7 +65,6 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       value={{
         connected: !!address,
         address,
-        profile,
         connecting,
         error,
         connect,

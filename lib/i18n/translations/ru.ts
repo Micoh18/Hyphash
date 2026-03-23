@@ -94,6 +94,9 @@ export const ru: Record<TranslationKey, string> = {
   "feed.oldest_first": "Сначала старые",
   "feed.all": "Все",
   "feed.no_results": "Нет наблюдений, соответствующих вашим фильтрам.",
+  "feed.needs_id": "Нужна идентификация",
+  "feed.active_discussions": "Активные обсуждения",
+  "feed.identified": "Идентифицированные",
 
   // Map
   "map.near_me": "Рядом со мной",
@@ -108,6 +111,9 @@ export const ru: Record<TranslationKey, string> = {
   "form.step_appearance": "Внешний вид",
   "form.step_environment": "Среда обитания",
   "form.step_id_notes": "Определение и заметки",
+  "form.essentials_hint": "Начните с того, где и когда вы нашли гриб, и добавьте хотя бы одну фотографию.",
+  "form.describe_hint": "Опишите то, что видите. Заполняйте только то, что заметили — всё необязательно.",
+  "form.environment_hint": "Где он рос? Это помогает сузить идентификацию.",
   "form.date_observed": "Дата наблюдения",
   "form.location": "Местоположение",
   "form.getting_location": "Определение местоположения...",
@@ -241,6 +247,8 @@ export const ru: Record<TranslationKey, string> = {
   "profile.anonymous": "Аноним",
   "profile.joined": "Присоединился",
   "profile.no_observations": "Пока нет наблюдений",
+  "profile.explored": "Исследовано",
+  "profile.species_documented": "Задокументированные виды",
 
   // Comments
   "comments.no_comments": "Пока нет комментариев. Начните обсуждение первым!",

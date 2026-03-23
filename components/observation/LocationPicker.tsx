@@ -249,7 +249,7 @@ export function LocationPicker({
               onClick={() => onRadiusChange(opt.value)}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
                 radius === opt.value
-                  ? "bg-emerald-600 text-white border-emerald-600"
+                  ? "bg-forest text-white border-forest"
                   : "bg-[var(--background)] text-[var(--foreground)] border-[var(--border)] hover:bg-[var(--muted)]"
               }`}
             >

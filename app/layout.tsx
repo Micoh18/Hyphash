@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AuthProvider } from "@/hooks/useAuth";
 import { WalletProvider } from "@/hooks/useWallet";
 import { ObservationsProvider } from "@/hooks/useObservations";
 import { I18nProvider } from "@/hooks/useI18n";
@@ -28,11 +29,13 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         <I18nProvider>
-          <WalletProvider>
-            <ObservationsProvider>
-              {children}
-            </ObservationsProvider>
-          </WalletProvider>
+          <AuthProvider>
+            <WalletProvider>
+              <ObservationsProvider>
+                {children}
+              </ObservationsProvider>
+            </WalletProvider>
+          </AuthProvider>
         </I18nProvider>
       </body>
     </html>

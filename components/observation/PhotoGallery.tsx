@@ -22,7 +22,11 @@ export function PhotoGallery({ photos }: { photos: ObservationPhoto[] }) {
     return (
       <div className="w-full aspect-video bg-[var(--muted)] rounded-xl flex items-center justify-center">
         <div className="text-center text-[var(--muted-foreground)]">
-          <div className="text-4xl mb-2">📷</div>
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="mx-auto mb-2 opacity-40">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <circle cx="8.5" cy="8.5" r="1.5" />
+            <path d="M21 15l-5-5L5 21" />
+          </svg>
           <p className="text-sm">{t("photos.no_photos")}</p>
         </div>
       </div>
@@ -42,14 +46,17 @@ export function PhotoGallery({ photos }: { photos: ObservationPhoto[] }) {
         />
       </div>
       {photos.length > 1 && (
-        <div className="flex gap-2 overflow-x-auto pb-1">
+        <div className="flex gap-2 overflow-x-auto pb-1" role="tablist">
           {photos.map((photo, i) => (
             <button
               key={photo.id}
               onClick={() => setSelected(i)}
+              role="tab"
+              aria-selected={i === selected}
+              aria-label={t(PHOTO_TYPE_KEYS[photo.photo_type] ?? "photo_type.other")}
               className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-colors ${
                 i === selected
-                  ? "border-emerald-500"
+                  ? "border-moss"
                   : "border-transparent opacity-70 hover:opacity-100"
               }`}
             >

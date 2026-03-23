@@ -17,7 +17,7 @@ export function ObservationCard({ observation }: { observation: Observation }) {
   return (
     <Link
       href={`/observation/${observation.id}`}
-      className="block bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 hover:border-emerald-300 transition-colors"
+      className="block bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 hover:border-moss transition-colors"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">

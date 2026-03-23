@@ -33,9 +33,17 @@ export default function FeedPage() {
       return sort === "newest" ? dateB - dateA : dateA - dateB;
     });
 
+  // Urgency sections: split by what needs attention
+  const needsId = filtered.filter((o) => o.status === "unverified");
+  const inDiscussion = filtered.filter((o) => o.status === "discussing");
+  const rest = filtered.filter((o) => o.status !== "unverified" && o.status !== "discussing");
+
   const statusOptions: (ObservationStatus | "all")[] = [
     "all", "unverified", "discussing", "community_id", "unknown",
   ];
+
+  // Show urgency sections only in default view (no filter/search active)
+  const showUrgencySections = statusFilter === "all" && !search && sort === "newest";
 
   return (
     <div className="min-h-screen bg-[var(--background)]">
@@ -66,13 +74,13 @@ export default function FeedPage() {
               placeholder={t("feed.search_placeholder")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-[var(--card)] border border-[var(--border)] rounded-lg text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500"
+              className="w-full pl-10 pr-4 py-2.5 bg-[var(--card)] border border-[var(--border)] rounded-lg text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:ring-2 focus:ring-moss/30 focus:border-moss"
             />
           </div>
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value as SortOption)}
-            className="px-3 py-2.5 bg-[var(--card)] border border-[var(--border)] rounded-lg text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+            className="px-3 py-2.5 bg-[var(--card)] border border-[var(--border)] rounded-lg text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-moss/30"
           >
             <option value="newest">{t("feed.newest_first")}</option>
             <option value="oldest">{t("feed.oldest_first")}</option>
@@ -80,14 +88,14 @@ export default function FeedPage() {
         </div>
 
         {/* Status pills */}
-        <div className="flex gap-2 mb-6 overflow-x-auto pb-1">
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-1" role="group" aria-label="Filter by status">
           {statusOptions.map((status) => (
             <button
               key={status}
               onClick={() => setStatusFilter(status)}
               className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
                 statusFilter === status
-                  ? "bg-emerald-600 text-white"
+                  ? "bg-forest text-white"
                   : "bg-[var(--card)] border border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)]"
               }`}
             >
@@ -96,13 +104,78 @@ export default function FeedPage() {
           ))}
         </div>
 
-        {/* Photo grid */}
+        {/* Content */}
         {filtered.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
-            {filtered.map((obs) => (
-              <ObservationPhotoCard key={obs.id} observation={obs} />
-            ))}
-          </div>
+          showUrgencySections ? (
+            <div className="space-y-10">
+              {/* Needs identification */}
+              {needsId.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-2 h-2 rounded-full bg-gray-400" />
+                    <h2 className="text-sm font-semibold text-[var(--foreground)]">
+                      {t("feed.needs_id") || "Needs identification"}
+                    </h2>
+                    <span className="text-xs text-[var(--muted-foreground)]">
+                      ({needsId.length})
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+                    {needsId.map((obs) => (
+                      <ObservationPhotoCard key={obs.id} observation={obs} />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Active discussions */}
+              {inDiscussion.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-2 h-2 rounded-full bg-amber-500" />
+                    <h2 className="text-sm font-semibold text-[var(--foreground)]">
+                      {t("feed.active_discussions") || "Active discussions"}
+                    </h2>
+                    <span className="text-xs text-[var(--muted-foreground)]">
+                      ({inDiscussion.length})
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+                    {inDiscussion.map((obs) => (
+                      <ObservationPhotoCard key={obs.id} observation={obs} />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Identified / other */}
+              {rest.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-2 h-2 rounded-full bg-moss" />
+                    <h2 className="text-sm font-semibold text-[var(--foreground)]">
+                      {t("feed.identified") || "Identified"}
+                    </h2>
+                    <span className="text-xs text-[var(--muted-foreground)]">
+                      ({rest.length})
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+                    {rest.map((obs) => (
+                      <ObservationPhotoCard key={obs.id} observation={obs} />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            /* Flat grid when filtering/searching */
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+              {filtered.map((obs) => (
+                <ObservationPhotoCard key={obs.id} observation={obs} />
+              ))}
+            </div>
+          )
         ) : (
           <div className="text-center py-24">
             <svg
