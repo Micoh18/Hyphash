@@ -2,7 +2,7 @@ import type { TranslationKey } from "./en";
 
 export const pt: Record<TranslationKey, string> = {
   // Common
-  "common.mycelium": "Mycelium",
+  "common.mycelium": "Hyphash",
   "common.tagline": "Rede de Conhecimento sobre Fungos",
   "common.loading_map": "Carregando mapa...",
   "common.unknown_species": "Espécie desconhecida",
@@ -33,13 +33,13 @@ export const pt: Record<TranslationKey, string> = {
   // Landing page
   "landing.enter_app": "Entrar no App",
   "landing.subtitle": "Uma rede de conhecimento fúngico impulsionada pela comunidade",
-  "landing.description": "Documente fungos silvestres, compartilhe observações detalhadas e faça crescer um mapa vivo do mundo fúngico — juntos.",
+  "landing.description": "Documente fungos silvestres, compartilhe observações detalhadas e faça crescer um mapa vivo do mundo fúngico, juntos.",
   "landing.feature1_title": "Exploração no mapa",
   "landing.feature1_desc": "Cada observação está fixada em uma localização real. Explore o que cresce perto de você ou no mundo todo.",
   "landing.feature2_title": "Descrições detalhadas",
-  "landing.feature2_desc": "Formulários guiados ensinam a observar chapéu, lamelas, estipe, cheiro, habitat — construindo habilidades micológicas reais.",
+  "landing.feature2_desc": "Formulários guiados ensinam a observar chapéu, lamelas, estipe, cheiro, habitat, construindo habilidades micológicas reais.",
   "landing.feature3_title": "Identificação comunitária",
-  "landing.feature3_desc": "Discuta, sugira identificações e construa consenso. O conhecimento cresce como micélio — conectado e resiliente.",
+  "landing.feature3_desc": "Discuta, sugira identificações e construa consenso. O conhecimento cresce como micélio, conectado e resiliente.",
   "landing.open_source": "Código aberto. Propriedade comunitária. Sem anúncios.",
   "landing.how_title": "Como funciona",
   "landing.how_subtitle": "Três passos para contribuir com a base de conhecimento fúngico do mundo.",
@@ -48,7 +48,7 @@ export const pt: Record<TranslationKey, string> = {
   "landing.step1_desc": "Encontre um fungo na natureza. Fotografe de vários ângulos e marque sua localização GPS exata no mapa.",
   "landing.step2_number": "02",
   "landing.step2_title": "Descreva",
-  "landing.step2_desc": "Um formulário estruturado guia você pelo chapéu, lamelas, estipe, carne, cheiro, habitat — cada detalhe que importa para a identificação.",
+  "landing.step2_desc": "Um formulário estruturado guia você pelo chapéu, lamelas, estipe, carne, cheiro, habitat, cada detalhe que importa para a identificação.",
   "landing.step3_number": "03",
   "landing.step3_title": "Identifique",
   "landing.step3_desc": "A comunidade revisa, discute e constrói consenso sobre a identificação de espécies. O conhecimento cresce a cada observação.",
@@ -62,11 +62,11 @@ export const pt: Record<TranslationKey, string> = {
   "landing.faq1_q": "Preciso ser especialista em micologia?",
   "landing.faq1_a": "De jeito nenhum. O formulário de observação foi projetado para te ensinar o que procurar. Descreva o que você vê e a comunidade ajudará com a identificação. Cada observação ajuda, independente do seu nível de experiência.",
   "landing.faq2_q": "Como funciona a identificação comunitária?",
-  "landing.faq2_a": "Depois de enviar uma observação, outros usuários podem concordar, discordar ou sugerir espécies alternativas. Quando pessoas suficientes chegam a um consenso, a observação é marcada como verificada pela comunidade.",
+  "landing.faq2_a": "Chamamos isso de Proof of Spore: depois de enviar uma observação, outros usuários podem concordar, discordar ou sugerir espécies alternativas. Quando três observadores independentes concordam na mesma identificação, a observação atinge consenso e é marcada como verificada pela comunidade.",
   "landing.faq3_q": "Meus dados são abertos?",
   "landing.faq3_a": "Sim. Todas as observações são publicamente acessíveis. As fotos podem ser armazenadas no IPFS para hospedagem permanente e descentralizada, e as observações podem ser cunhadas como NFTs na Stellar para proveniência imutável.",
-  "landing.faq4_q": "O que torna o Mycelium diferente do iNaturalist?",
-  "landing.faq4_a": "O Mycelium é exclusivo para fungos, com descrições profundas e foco no mapa. Em vez de apenas enviar uma foto, nosso formulário estruturado captura as características morfológicas detalhadas que os micologistas realmente precisam para uma identificação precisa.",
+  "landing.faq4_q": "O que torna o Hyphash diferente do iNaturalist?",
+  "landing.faq4_a": "O Hyphash é exclusivo para fungos, com descrições profundas e foco no mapa. Em vez de apenas enviar uma foto, nosso formulário estruturado captura as características morfológicas detalhadas que os micologistas realmente precisam para uma identificação precisa.",
   "landing.faq5_q": "Posso usar no celular?",
   "landing.faq5_a": "O app web é totalmente responsivo e funciona em navegadores móveis. Um app móvel dedicado também está em desenvolvimento com suporte offline para uso em campo.",
 
@@ -78,7 +78,7 @@ export const pt: Record<TranslationKey, string> = {
   "home.step1_title": "Encontre um fungo",
   "home.step1_desc": "Você caminha pela floresta, encontra um cogumelo e fotografa.",
   "home.step2_title": "Descreva o que você vê",
-  "home.step2_desc": "Um formulário guiado ajuda você a descrever chapéu, lamelas, estipe, cheiro e habitat — ensinando a observar.",
+  "home.step2_desc": "Um formulário guiado ajuda você a descrever chapéu, lamelas, estipe, cheiro e habitat, ensinando a observar.",
   "home.step3_title": "A comunidade identifica",
   "home.step3_desc": "Outros discutem, sugerem identificações e constroem consenso. O conhecimento cresce como micélio.",
   "home.recent_observations": "Observações recentes",
@@ -112,7 +112,7 @@ export const pt: Record<TranslationKey, string> = {
   "form.step_environment": "Ambiente",
   "form.step_id_notes": "ID e Notas",
   "form.essentials_hint": "Comece com onde e quando encontrou, e adicione pelo menos uma foto.",
-  "form.describe_hint": "Descreva o que vê. Preencha apenas o que notar — tudo é opcional.",
+  "form.describe_hint": "Descreva o que vê. Preencha apenas o que notar, tudo é opcional.",
   "form.environment_hint": "Onde estava crescendo? Isso ajuda a refinar a identificação.",
   "form.date_observed": "Data da observação",
   "form.location": "Localização",
@@ -152,7 +152,7 @@ export const pt: Record<TranslationKey, string> = {
 
   // Advanced appearance
   "form.advanced_toggle": "Campos taxonômicos avançados",
-  "form.advanced_hint": "Opcional — para observadores experientes",
+  "form.advanced_hint": "Opcional, para observadores experientes",
   "form.cap_margin": "Margem do píleo",
   "form.gill_attachment": "Inserção das lamelas",
   "form.gill_spacing": "Espaçamento das lamelas",
@@ -188,7 +188,7 @@ export const pt: Record<TranslationKey, string> = {
 
   // Photos
   "photos.title": "Fotos",
-  "photos.description": "Adicione fotos de diferentes ângulos — topo do chapéu, parte inferior, estipe, corte transversal e habitat.",
+  "photos.description": "Adicione fotos de diferentes ângulos, topo do chapéu, parte inferior, estipe, corte transversal e habitat.",
   "photos.tap_to_add": "Toque para adicionar fotos",
   "photos.size_hint": "PNG, JPG até 10MB cada",
   "photos.no_photos": "Nenhuma foto ainda",
@@ -423,19 +423,19 @@ export const pt: Record<TranslationKey, string> = {
   "season.year_round": "O ano todo",
 
   // Advanced InfoTip explanations
-  "info.cap_margin": "A borda do píleo. Observe de lado — é lisa (inteira), ondulada (ondulada), enrolada para dentro (involuta), ou apresenta linhas visíveis (estriada)?",
+  "info.cap_margin": "A borda do píleo. Observe de lado, é lisa (inteira), ondulada (ondulada), enrolada para dentro (involuta), ou apresenta linhas visíveis (estriada)?",
   "info.gill_attachment": "Como as lamelas se conectam ao estipe. Livres = não tocam o estipe. Adnatas = totalmente aderidas. Decorrentes = descem pelo estipe. Sinuadas = com reentrância antes do estipe.",
   "info.gill_spacing": "Quão próximas estão as lamelas entre si. Próximas = muito juntas com muitas lamelas. Espaçadas = moderado. Distantes = poucas lamelas, bem separadas.",
   "info.stem_shape": "A forma geral do estipe. Cilíndrico = largura uniforme. Claviforme = mais largo na base (em clava). Bulboso = dilatação arredondada na base. Fusiforme = afilado nas duas pontas.",
   "info.stem_surface": "A textura da superfície do estipe. Reticulada significa um padrão de rede em relevo (típico de Boletus edulis). Pruinosa significa um revestimento fino e pulverulento.",
-  "info.stem_base": "Observe a parte inferior do estipe. Uma volva (estrutura em forma de saco) é fundamental — é uma característica-chave de Amanita, que inclui espécies mortais.",
-  "info.has_volva": "A volva é uma estrutura em forma de cálice ou saco na base do estipe, remanescente do véu universal. Muito importante — espécies com volva incluem Amanitas mortais.",
+  "info.stem_base": "Observe a parte inferior do estipe. Uma volva (estrutura em forma de saco) é fundamental, é uma característica-chave de Amanita, que inclui espécies mortais.",
+  "info.has_volva": "A volva é uma estrutura em forma de cálice ou saco na base do estipe, remanescente do véu universal. Muito importante, espécies com volva incluem Amanitas mortais.",
   "info.flesh_consistency": "Quebre ou corte o cogumelo. A carne é firme e compacta, ou esfarela facilmente (frágil)? É flexível (elástica) ou tem textura esponjosa?",
   "info.color_change": "Corte ou quebre a carne e observe por 1-2 minutos. Muitos boletos azulam. Alguns Agaricus amarelam. Esta é uma característica-chave para identificação.",
   "info.has_latex": "Alguns cogumelos (especialmente Lactarius/Russula) exsudam um líquido leitoso quando cortados. Observe se está presente e qual a cor.",
-  "info.taste": "Uma ferramenta clássica da micologia — toque um pedaço minúsculo na ponta da língua e cuspa. Faça isso SOMENTE se for experiente e tiver certeza de que o cogumelo não é mortalmente tóxico.",
+  "info.taste": "Uma ferramenta clássica da micologia, toque um pedaço minúsculo na ponta da língua e cuspa. Faça isso SOMENTE se for experiente e tiver certeza de que o cogumelo não é mortalmente tóxico.",
   "info.ecological_role": "Micorrízico = vive em simbiose com raízes de árvores. Saprotrófico = decompõe matéria orgânica morta. Parasita = alimenta-se de organismos vivos.",
-  "info.season": "Quando você encontrou este cogumelo. Ajuda na identificação — muitas espécies frutificam apenas em estações específicas.",
+  "info.season": "Quando você encontrou este cogumelo. Ajuda na identificação, muitas espécies frutificam apenas em estações específicas.",
 
   // Flagging
   "flag.report": "Denunciar",
@@ -473,22 +473,22 @@ export const pt: Record<TranslationKey, string> = {
   "publish.signing": "Aguardando assinatura do Freighter...",
 
   // Glossary / InfoTip explanations
-  "info.cap": "O chapéu (píleo) é a parte superior do cogumelo — a forma de 'chapéu' ou 'guarda-chuva' que você vê de cima.",
+  "info.cap": "O chapéu (píleo) é a parte superior do cogumelo, a forma de 'chapéu' ou 'guarda-chuva' que você vê de cima.",
   "info.underside": "A parte inferior é a superfície de baixo do chapéu, onde os esporos são produzidos. Pode ter lamelas, poros, acúleos ou ser lisa.",
-  "info.stem": "O estipe (pé) é a haste que sustenta o chapéu. Nem todos os fungos possuem um — alguns crescem diretamente sobre madeira ou solo.",
+  "info.stem": "O estipe (pé) é a haste que sustenta o chapéu. Nem todos os fungos possuem um, alguns crescem diretamente sobre madeira ou solo.",
   "info.flesh": "A carne (contexto) é o tecido interno que se vê ao cortar ou partir o cogumelo.",
-  "info.smell_section": "O cheiro é uma característica-chave para a identificação. Quebre ou esmague um pedaço pequeno e cheire — muitas espécies têm odores distintivos.",
+  "info.smell_section": "O cheiro é uma característica-chave para a identificação. Quebre ou esmague um pedaço pequeno e cheire, muitas espécies têm odores distintivos.",
   "info.cap_shape": "Observe o chapéu de lado. É arredondado (convexo), plano, pontudo (cônico) ou em forma de funil? 'Umbonado' significa que tem uma pequena protuberância no centro.",
   "info.cap_surface": "Toque a superfície do chapéu gentilmente. É lisa, coberta de escamas, pegajosa/viscosa quando molhada, ou pilosa/fibrosa?",
   "info.cap_size": "Meça ou estime o diâmetro do chapéu no ponto mais largo, em centímetros.",
   "info.underside_type": "Lamelas são estruturas finas em forma de lâmina. Poros são pequenos orifícios (como uma esponja). Acúleos são pequenos espinhos pendentes. Lisa significa sem estruturas visíveis.",
   "info.stem_hollow": "Quebre ou corte o estipe ao meio transversalmente. O interior é oco (vazio) ou sólido? Isso ajuda a delimitar a espécie.",
   "info.stem_ring": "O anel (ânulo) é uma estrutura em forma de saia ao redor do estipe, deixada quando o chapéu se expandiu. Algumas espécies mortais possuem anéis proeminentes.",
-  "info.bruise_color": "Pressione ou raspe a carne e espere um minuto. Alguns cogumelos mudam de cor — por ex., boletos que azulam, ou espécies de Agaricus que amarelam.",
-  "info.substrate": "O substrato é aquilo sobre o qual o cogumelo está crescendo fisicamente — solo, um tronco morto, um tronco de árvore viva, serapilheira, esterco, etc.",
-  "info.habitat": "O ambiente mais amplo onde você encontrou o cogumelo — tipo de floresta, campo, jardim, etc.",
+  "info.bruise_color": "Pressione ou raspe a carne e espere um minuto. Alguns cogumelos mudam de cor, por ex., boletos que azulam, ou espécies de Agaricus que amarelam.",
+  "info.substrate": "O substrato é aquilo sobre o qual o cogumelo está crescendo fisicamente, solo, um tronco morto, um tronco de árvore viva, serapilheira, esterco, etc.",
+  "info.habitat": "O ambiente mais amplo onde você encontrou o cogumelo, tipo de floresta, campo, jardim, etc.",
   "info.growth_pattern": "Como os cogumelos estão dispostos? Um único (solitário), um grupo compacto (agrupado), um anel de fadas, ou dispersos aleatoriamente?",
-  "info.spore_print": "A esporada é feita colocando o chapéu com as lamelas voltadas para baixo sobre papel por algumas horas. Os esporos caem e deixam uma impressão colorida — muito útil para identificação.",
+  "info.spore_print": "A esporada é feita colocando o chapéu com as lamelas voltadas para baixo sobre papel por algumas horas. Os esporos caem e deixam uma impressão colorida, muito útil para identificação.",
 
   // Footer
   "footer.description": "Uma plataforma impulsionada pela comunidade para documentar e identificar fungos silvestres. Código aberto, sem anúncios e criada por micologistas para todos.",
@@ -500,19 +500,19 @@ export const pt: Record<TranslationKey, string> = {
   "footer.terms": "Termos de Serviço",
   "footer.discussions": "Discussões",
   "footer.contributing": "Contribuir",
-  "footer.copyright": "© 2026 Mycelium. Código aberto sob licença MIT.",
+  "footer.copyright": "© 2026 Hyphash. Código aberto sob licença MIT.",
   "footer.open_source_badge": "Código Aberto",
 
   // 404
   "notfound.title": "Perdido no micélio",
-  "notfound.subtitle": "Esta página não existe — mas há muito para explorar.",
+  "notfound.subtitle": "Esta página não existe, mas há muito para explorar.",
   "notfound.go_home": "Ir para o início",
   "notfound.go_map": "Explorar Mapa",
 
   // Mission section (Why Fungi Matter)
   "landing.mission_title": "Por que os fungos importam",
   "landing.mission_p1": "Os fungos são os arquitetos ocultos de quase todos os ecossistemas da Terra. Eles decompõem matéria orgânica, formam redes simbióticas com plantas e produzem compostos que sustentam cadeias alimentares inteiras. No entanto, mal começamos a compreendê-los.",
-  "landing.mission_p2": "A ciência cidadã tem o poder de mudar isso. Cada observação — mesmo uma única foto com localização e descrição — adiciona um dado ao nosso entendimento coletivo do reino fúngico.",
+  "landing.mission_p2": "A ciência cidadã tem o poder de mudar isso. Cada observação, mesmo uma única foto com localização e descrição, adiciona um dado ao nosso entendimento coletivo do reino fúngico.",
   "landing.fact1_number": "90%",
   "landing.fact1_label": "Não documentadas",
   "landing.fact1_desc": "Estima-se que 90% das espécies de fungos nunca foram formalmente descritas pela ciência.",
@@ -525,37 +525,49 @@ export const pt: Record<TranslationKey, string> = {
 
   // Built Different section
   "landing.different_title": "Feito diferente",
-  "landing.different_subtitle": "O Mycelium não é mais um app genérico de biodiversidade. Foi construído especificamente para os desafios únicos da documentação de fungos.",
+  "landing.different_subtitle": "O Hyphash não é mais um app genérico de biodiversidade. Foi construído especificamente para os desafios únicos da documentação de fungos.",
   "landing.diff1_title": "Foco exclusivo em fungos",
-  "landing.diff1_desc": "Sem pássaros, sem plantas — apenas fungos. Uma plataforma dedicada significa melhores ferramentas, melhor comunidade e melhor ciência.",
+  "landing.diff1_desc": "Sem pássaros, sem plantas, apenas fungos. Uma plataforma dedicada significa melhores ferramentas, melhor comunidade e melhor ciência.",
   "landing.diff2_title": "Descrições detalhadas",
-  "landing.diff2_desc": "Formulários guiados capturam chapéu, lamelas, estipe, cheiro e habitat — os detalhes morfológicos que realmente importam para a identificação.",
+  "landing.diff2_desc": "Formulários guiados capturam chapéu, lamelas, estipe, cheiro e habitat, os detalhes morfológicos que realmente importam para a identificação.",
   "landing.diff3_title": "Descentralizado e aberto",
   "landing.diff3_desc": "Código aberto, dados abertos. As observações podem ser armazenadas no IPFS e cunhadas na Stellar para proveniência permanente e verificável.",
+
+  // Proof of Spore section
+  "landing.pos_eyebrow": "Mecanismo de consenso",
+  "landing.pos_title": "Proof of Spore",
+  "landing.pos_subtitle": "A identificação não é a decisão de um único especialista. É uma rede chegando a um acordo.",
+  "landing.pos_step1_title": "Uma observação é publicada",
+  "landing.pos_step1_desc": "Você envia fotos, morfologia, hábitat e uma espécie proposta. A observação entra na rede como não verificada.",
+  "landing.pos_step2_title": "A comunidade opina",
+  "landing.pos_step2_desc": "Outros observadores concordam, discordam ou sugerem espécies alternativas, adicionando evidências e discussão ao registro.",
+  "landing.pos_step3_title": "Três acordos independentes",
+  "landing.pos_step3_desc": "Quando três observadores distintos convergem na mesma identificação, a observação atinge consenso e é marcada como verificada pela comunidade, uma versão nativa fúngica de prova distribuída.",
+  "landing.pos_footnote": "Inspirado no proof-of-stake, mas aqui o que está em jogo é sua reputação como observador, e o ativo verificado é o conhecimento biológico coletivo.",
 
   // Recent Activity / Founding
   "landing.recent_title": "Observações recentes",
   "landing.recent_empty": "Nenhuma observação ainda. Seja o primeiro explorador.",
   "landing.recent_cta": "Registre sua primeira observação",
   "landing.founding_title": "Junte-se à comunidade fundadora",
-  "landing.founding_desc": "O Mycelium está apenas começando. Os primeiros observadores moldam como a plataforma cresce — suas contribuições importam mais agora do que nunca.",
+  "landing.founding_desc": "O Hyphash está apenas começando. Os primeiros observadores moldam como a plataforma cresce, suas contribuições importam mais agora do que nunca.",
   "landing.founding_cta": "Seja um observador fundador",
 
   // About page
-  "about.title": "Sobre o Mycelium",
+  "about.title": "Sobre o Hyphash",
   "about.mission_title": "Nossa missão",
-  "about.mission_p1": "O Mycelium existe para construir o mapa mais detalhado, aberto e comunitário do mundo fúngico. Acreditamos que os fungos estão enormemente sub-representados nas bases de dados de biodiversidade, e que a melhor forma de mudar isso é dar às pessoas as ferramentas para documentar o que encontram.",
-  "about.mission_p2": "Estamos construindo uma plataforma onde cada observação — de um passeio casual no parque a uma expedição na floresta — contribui para um entendimento compartilhado da biodiversidade fúngica.",
+  "about.mission_p1": "O Hyphash existe para construir o mapa mais detalhado, aberto e comunitário do mundo fúngico. Acreditamos que os fungos estão enormemente sub-representados nas bases de dados de biodiversidade, e que a melhor forma de mudar isso é dar às pessoas as ferramentas para documentar o que encontram.",
+  "about.mission_p2": "Estamos construindo uma plataforma onde cada observação, de um passeio casual no parque a uma expedição na floresta, contribui para um entendimento compartilhado da biodiversidade fúngica.",
   "about.story_title": "A história",
-  "about.story_p1": "O Mycelium começou como uma ideia simples: e se existisse um espaço dedicado a observações de fungos que fosse além de uma foto? Um lugar que ensinasse as pessoas o que observar, capturasse os detalhes morfológicos que importam e construísse uma comunidade em torno da identificação coletiva.",
+  "about.story_p1": "O Hyphash começou como uma ideia simples: e se existisse um espaço dedicado a observações de fungos que fosse além de uma foto? Um lugar que ensinasse as pessoas o que observar, capturasse os detalhes morfológicos que importam e construísse uma comunidade em torno da identificação coletiva.",
   "about.opensource_title": "Código aberto",
-  "about.opensource_desc": "O Mycelium é totalmente de código aberto. O código, o modelo de dados e as diretrizes da comunidade são todos desenvolvidos de forma aberta. Acreditamos que a transparência gera confiança, e a confiança gera melhor ciência.",
+  "about.opensource_desc": "O Hyphash é totalmente de código aberto. O código, o modelo de dados e as diretrizes da comunidade são todos desenvolvidos de forma aberta. Acreditamos que a transparência gera confiança, e a confiança gera melhor ciência.",
   "about.community_title": "Comunidade",
-  "about.community_desc": "Cada observação, cada sugestão de identificação, cada discussão — tudo vem da comunidade. O Mycelium é construído por micologistas, coletores, estudantes e caminhantes curiosos. Todos são bem-vindos.",
+  "about.community_desc": "Cada observação, cada sugestão de identificação, cada discussão, tudo vem da comunidade. O Hyphash é construído por micologistas, coletores, estudantes e caminhantes curiosos. Todos são bem-vindos.",
 
   // Privacy page
   "privacy.title": "Política de Privacidade",
-  "privacy.intro": "O Mycelium respeita sua privacidade. Esta política explica quais dados coletamos e como os utilizamos.",
+  "privacy.intro": "O Hyphash respeita sua privacidade. Esta política explica quais dados coletamos e como os utilizamos.",
   "privacy.data_title": "O que coletamos",
   "privacy.data_desc": "As observações que você envia (incluindo fotos, localização e descrições) são públicas por padrão. Armazenamos o endereço da sua carteira para fins de identidade. Não vendemos nem compartilhamos seus dados pessoais com terceiros.",
   "privacy.location_title": "Dados de localização",
@@ -564,7 +576,7 @@ export const pt: Record<TranslationKey, string> = {
 
   // Terms page
   "terms.title": "Termos de Serviço",
-  "terms.intro": "Ao usar o Mycelium, você concorda com estes termos. O Mycelium é uma plataforma aberta e comunitária para documentar fungos.",
+  "terms.intro": "Ao usar o Hyphash, você concorda com estes termos. O Hyphash é uma plataforma aberta e comunitária para documentar fungos.",
   "terms.usage_title": "Uso aceitável",
   "terms.usage_desc": "Você concorda em enviar apenas observações genuínas. Não envie conteúdo inapropriado, spam ou identificações deliberadamente enganosas. Moderadores da comunidade podem remover conteúdo que viole estas diretrizes.",
   "terms.content_title": "Seu conteúdo",

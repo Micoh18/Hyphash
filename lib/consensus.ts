@@ -9,7 +9,7 @@ interface ConsensusResult {
 }
 
 /**
- * Check if an observation has reached community consensus.
+ * Proof of Spore: check if an observation has reached community consensus.
  * Consensus = 3+ unique users posted "agree" comments.
  * If "suggest" comments exist, the most-agreed species wins.
  */

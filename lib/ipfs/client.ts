@@ -109,14 +109,14 @@ export function buildObservationMetadata(observation: {
   photo_cids: string[];
 }) {
   return {
-    name: `Mycelium Observation #${observation.id}`,
-    description: observation.notes ?? "Fungi observation on Mycelium",
+    name: `Hyphash Observation #${observation.id}`,
+    description: observation.notes ?? "Fungi observation on Hyphash",
     species: observation.species ?? "Unknown",
     location: observation.location,
     observed_at: observation.observed_at,
     observer: observation.observer_address ?? "anonymous",
     images: observation.photo_cids.map((cid) => `ipfs://${cid}`),
-    platform: "Mycelium",
+    platform: "Hyphash",
     version: "0.1",
     created_at: new Date().toISOString(),
   };

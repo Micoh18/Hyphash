@@ -6,7 +6,7 @@ import { I18nProvider } from "@/hooks/useI18n";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Mycelium — Fungi Knowledge Network",
+  title: "Hyphash, Fungi Knowledge Network",
   description:
     "A community-driven interactive map where people document fungi they find in the wild.",
 };

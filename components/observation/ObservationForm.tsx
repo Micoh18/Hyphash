@@ -473,7 +473,7 @@ export function ObservationForm() {
             {/* Mushroom diagram */}
             <MushroomDiagram />
             <p className="text-sm text-[var(--muted-foreground)] text-center mb-2">
-              {t("form.describe_hint") || "Describe what you see. Only fill what you notice — everything is optional."}
+              {t("form.describe_hint") || "Describe what you see. Only fill what you notice, everything is optional."}
             </p>
 
             {/* Core fields */}

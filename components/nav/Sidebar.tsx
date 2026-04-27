@@ -77,7 +77,7 @@ export function Sidebar() {
       >
         <div className="px-5 py-5 border-b border-[var(--border)]">
           <Link href="/" className="text-xl font-bold text-[var(--foreground)] flex items-center gap-2">
-            <Image src="/logo.png" alt="Mycelium" width={32} height={32} className="rounded-full" />
+            <Image src="/logo.png" alt="Hyphash" width={32} height={32} className="rounded-full" />
             {t("common.mycelium")}
           </Link>
           <p className="text-xs text-[var(--muted-foreground)] mt-1">

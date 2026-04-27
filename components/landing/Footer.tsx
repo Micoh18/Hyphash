@@ -45,7 +45,7 @@ export function Footer() {
             </h4>
             <ul className="space-y-3">
               <li>
-                <a href="https://github.com/mycelium-network" target="_blank" rel="noopener noreferrer" className={linkClass}>
+                <a href="https://github.com/hyphash" target="_blank" rel="noopener noreferrer" className={linkClass}>
                   {t("footer.github")}
                 </a>
               </li>
@@ -61,12 +61,12 @@ export function Footer() {
             </h4>
             <ul className="space-y-3">
               <li>
-                <a href="https://github.com/mycelium-network/discussions" target="_blank" rel="noopener noreferrer" className={linkClass}>
+                <a href="https://github.com/hyphash/discussions" target="_blank" rel="noopener noreferrer" className={linkClass}>
                   {t("footer.discussions")}
                 </a>
               </li>
               <li>
-                <a href="https://github.com/mycelium-network/contributing" target="_blank" rel="noopener noreferrer" className={linkClass}>
+                <a href="https://github.com/hyphash/contributing" target="_blank" rel="noopener noreferrer" className={linkClass}>
                   {t("footer.contributing")}
                 </a>
               </li>

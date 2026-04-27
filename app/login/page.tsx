@@ -45,7 +45,7 @@ function LoginForm() {
       <div className="w-full max-w-sm space-y-6">
         <div className="text-center">
           <Link href="/" className="text-2xl font-bold text-[var(--foreground)]">
-            Mycelium
+            Hyphash
           </Link>
           <p className="text-sm text-[var(--muted-foreground)] mt-1">
             Sign in to document fungi

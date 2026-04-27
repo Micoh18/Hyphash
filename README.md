@@ -1,24 +1,24 @@
 <div align="center">
-  <img src="public/logo.png" alt="Mycelium" width="160" />
+  <img src="public/logo.png" alt="Hyphash" width="160" />
 
-  # Mycelium
+  # Hyphash
 
   **A community-driven, map-first platform for documenting wild fungi.**
 
-  *iNaturalist meets the forest floor — observation-deep, description-rich, community-verified, and anchored on-chain.*
+  *iNaturalist meets the forest floor: observation-deep, description-rich, community-verified, and anchored on-chain.*
 </div>
 
 ---
 
 ## Overview
 
-Mycelium is an interactive world map where mycophiles, foragers, and citizen scientists document wild fungi sightings with detailed sensory descriptions, photographs, and community-based identification. Verified observations can be minted as NFTs on the **Stellar** network, creating a permanent, decentralized record of biodiversity contributions.
+Hyphash is an interactive world map where mycophiles, foragers, and citizen scientists document wild fungi sightings with detailed sensory descriptions, photographs, and community-based identification. Verified observations reach consensus through **Proof of Spore** (three independent observers agreeing on an identification) and can be minted as NFTs on the **Stellar** network, creating a permanent, decentralized record of biodiversity contributions.
 
 ## Features
 
 - **Interactive World Map** — Leaflet-based map with custom SVG markers colored by observation status (pending, community-verified, expert-verified, disputed).
 - **Multi-step Observation Wizard** — Capture location, photos, morphology (cap shape, gill type, spore print), environment (substrate, habitat), and identification notes.
-- **Community Consensus Engine** — 3+ unique "agree" comments automatically promote an observation to *community-verified*.
+- **Proof of Spore (Consensus Engine)** — when three independent observers agree on the same identification, the observation is automatically promoted to *community-verified*.
 - **Auto-provisioned Stellar Wallets** — Encrypted with AES-256-GCM and minted as NFTs once verified.
 - **AI-assisted Identification** — On-device inference via `@huggingface/transformers`.
 - **Decentralized Media** — Photos and metadata pinned to IPFS through Pinata.

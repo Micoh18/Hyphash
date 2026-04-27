@@ -248,6 +248,47 @@ export default function LandingPage() {
       {/* Recent Activity */}
       <RecentActivity />
 
+      {/* Proof of Spore */}
+      <section className="py-16 md:py-24 border-t border-[var(--border)] bg-[var(--muted)]/30">
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="max-w-3xl mb-12 md:mb-16">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-spore mb-3">
+              {t("landing.pos_eyebrow")}
+            </p>
+            <h2 className="text-3xl md:text-4xl font-bold text-[var(--foreground)] tracking-tight mb-4">
+              {t("landing.pos_title")}
+            </h2>
+            <p className="text-lg text-[var(--muted-foreground)] leading-relaxed">
+              {t("landing.pos_subtitle")}
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 md:gap-10">
+            {([
+              { n: "01", title: "landing.pos_step1_title" as TranslationKey, desc: "landing.pos_step1_desc" as TranslationKey },
+              { n: "02", title: "landing.pos_step2_title" as TranslationKey, desc: "landing.pos_step2_desc" as TranslationKey },
+              { n: "03", title: "landing.pos_step3_title" as TranslationKey, desc: "landing.pos_step3_desc" as TranslationKey },
+            ]).map((step) => (
+              <div key={step.n} className="relative pl-6 border-l-2 border-spore/30">
+                <div className="text-xs font-mono font-bold text-spore mb-2 tracking-wider">
+                  {step.n}
+                </div>
+                <h3 className="text-base font-semibold text-[var(--foreground)] mb-2">
+                  {t(step.title)}
+                </h3>
+                <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
+                  {t(step.desc)}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <p className="mt-12 md:mt-16 text-xs italic text-[var(--muted-foreground)] max-w-2xl leading-relaxed border-l-2 border-[var(--border)] pl-4">
+            {t("landing.pos_footnote")}
+          </p>
+        </div>
+      </section>
+
       {/* Why Fungi Matter */}
       <section className="py-16 md:py-24 border-t border-[var(--border)]">
         <div className="max-w-5xl mx-auto px-6">
