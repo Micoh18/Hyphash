@@ -498,7 +498,7 @@ export const en = {
   "footer.terms": "Terms of Service",
   "footer.discussions": "Discussions",
   "footer.contributing": "Contributing",
-  "footer.copyright": "© 2024 Mycelium. Open source under MIT license.",
+  "footer.copyright": "© 2026 Mycelium. Open source under MIT license.",
   "footer.open_source_badge": "Open Source",
 
   // 404

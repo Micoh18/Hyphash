@@ -500,7 +500,7 @@ export const ru: Record<TranslationKey, string> = {
   "footer.terms": "Условия использования",
   "footer.discussions": "Обсуждения",
   "footer.contributing": "Участие в разработке",
-  "footer.copyright": "© 2024 Mycelium. Открытый исходный код под лицензией MIT.",
+  "footer.copyright": "© 2026 Mycelium. Открытый исходный код под лицензией MIT.",
   "footer.open_source_badge": "Открытый код",
 
   // 404

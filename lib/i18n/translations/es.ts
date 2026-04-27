@@ -500,7 +500,7 @@ export const es: Record<TranslationKey, string> = {
   "footer.terms": "Términos de Servicio",
   "footer.discussions": "Discusiones",
   "footer.contributing": "Contribuir",
-  "footer.copyright": "© 2024 Mycelium. Código abierto bajo licencia MIT.",
+  "footer.copyright": "© 2026 Mycelium. Código abierto bajo licencia MIT.",
   "footer.open_source_badge": "Código Abierto",
 
   // 404

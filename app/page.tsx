@@ -74,15 +74,16 @@ function SporePrint() {
       // Slight curve to simulate gill curvature
       const curve = (r3 - 0.5) * 12;
 
+      const round = (n: number, p = 4) => Number(n.toFixed(p));
       gillsArr.push({
         id: i,
-        angle,
-        innerR,
-        outerR,
-        width,
-        opacity,
-        curve,
-        delay: r4 * 2,
+        angle: round(angle, 6),
+        innerR: round(innerR),
+        outerR: round(outerR),
+        width: round(width),
+        opacity: round(opacity),
+        curve: round(curve),
+        delay: round(r4 * 2),
       });
     }
 
@@ -98,7 +99,8 @@ function SporePrint() {
     const y2 = cy + sin * g.outerR;
     const mx = (x1 + x2) / 2 + -sin * g.curve;
     const my = (y1 + y2) / 2 + cos * g.curve;
-    return `M${x1},${y1} Q${mx},${my} ${x2},${y2}`;
+    const r = (n: number) => n.toFixed(3);
+    return `M${r(x1)},${r(y1)} Q${r(mx)},${r(my)} ${r(x2)},${r(y2)}`;
   }
 
   return (
