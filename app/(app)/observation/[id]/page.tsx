@@ -74,7 +74,7 @@ export default function ObservationPage({
       }
     }
     fetchComments();
-  }, [id]);
+  }, [id, supabase]);
 
   if (!observation) {
     return (

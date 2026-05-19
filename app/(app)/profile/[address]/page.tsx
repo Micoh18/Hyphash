@@ -101,7 +101,7 @@ export default function ProfilePage({
       setProfileLoading(false);
     }
     fetchProfile();
-  }, [address]);
+  }, [address, supabase]);
 
   const userObs = observations.filter((o) => {
     if (profile) return o.observer_id === profile.id;
