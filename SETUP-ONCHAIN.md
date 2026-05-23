@@ -54,6 +54,9 @@ PINATA_SECRET_KEY=your_secret_key_here
 # Stellar
 NEXT_PUBLIC_STELLAR_NETWORK=testnet
 STELLAR_ISSUER_SECRET=your_issuer_secret_key_here
+
+# Wallet encryption — required by wallet creation / NFT minting
+WALLET_ENCRYPTION_KEY=your_32_plus_character_key_here
 ```
 
 > **Never commit `.env.local` to git.** It's already in `.gitignore` by default in Next.js.
@@ -133,6 +136,8 @@ Check the transaction on [Stellar Expert](https://stellar.expert/explorer/testne
 **"IPFS not configured"** — Check that `PINATA_API_KEY` and `PINATA_SECRET_KEY` are set in `.env.local` and restart the dev server.
 
 **"Stellar NFT minting not configured"** — Check that `STELLAR_ISSUER_SECRET` and `NEXT_PUBLIC_STELLAR_NETWORK` are set.
+
+**"WALLET_ENCRYPTION_KEY must be set"** — Generate a stable 32+ character key with `./scripts/generate-wallet-encryption-key.ps1` on Windows PowerShell, or any cryptographically secure random generator. Do not change this key after wallets exist.
 
 **Freighter not popping up** — Make sure you're on the correct network (testnet vs public) in both Freighter settings and `.env.local`.
 
