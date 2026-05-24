@@ -17,6 +17,9 @@ tsconfig.tsbuildinfo
 # Supabase local/linking temp files
 supabase/.temp/
 
+# Vercel local project metadata
+.vercel/
+
 # debug logs
 npm-debug.log*
 
@@ -27,3 +30,4 @@ npm-debug.log*
 # OS
 .DS_Store
 Thumbs.db
+.vercel
