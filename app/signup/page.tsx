@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import Link from "next/link";
+import { translateAuthError } from "@/lib/auth/errors";
 
 export default function SignupPage() {
   const { signUp, signInWithProvider } = useAuth();
@@ -20,7 +21,7 @@ export default function SignupPage() {
 
     const err = await signUp(email, password, username || undefined);
     if (err) {
-      setError(err);
+      setError(translateAuthError(err));
       setLoading(false);
     } else {
       setSuccess(true);

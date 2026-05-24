@@ -11,6 +11,7 @@ import {
 import type { Profile } from "@/types";
 import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
+import { getAuthCallbackUrl } from "@/lib/auth/redirects";
 
 interface AuthState {
   user: User | null;
@@ -114,6 +115,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         password,
         options: {
           data: { username: username || null },
+          emailRedirectTo: getAuthCallbackUrl("/map"),
         },
       });
       return error?.message ?? null;
@@ -126,7 +128,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: getAuthCallbackUrl("/map"),
         },
       });
     },

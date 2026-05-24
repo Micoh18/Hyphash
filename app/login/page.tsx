@@ -4,6 +4,7 @@ import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import Link from "next/link";
+import { translateAuthError } from "@/lib/auth/errors";
 
 export default function LoginPage() {
   return (
@@ -33,7 +34,7 @@ function LoginForm() {
 
     const err = await signIn(email, password);
     if (err) {
-      setError(err);
+      setError(translateAuthError(err));
       setLoading(false);
     } else {
       router.push(next);
@@ -82,6 +83,13 @@ function LoginForm() {
               className="w-full px-3 py-2.5 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] text-sm"
               placeholder="Min. 8 characters"
             />
+          </div>
+
+
+          <div className="text-right -mt-2">
+            <Link href="/forgot-password" className="text-xs text-forest hover:text-forest-light font-medium">
+              Forgot your password?
+            </Link>
           </div>
 
           {error && (
