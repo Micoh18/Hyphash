@@ -6,6 +6,7 @@ import {
   useState,
   useEffect,
   useCallback,
+  useMemo,
   type ReactNode,
 } from "react";
 import type { Profile } from "@/types";
@@ -26,7 +27,7 @@ interface AuthState {
 const AuthContext = createContext<AuthState>({} as AuthState);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -49,33 +50,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  // Fetch profile for a user
-  const fetchProfile = useCallback(
-    async (userId: string) => {
-      const { data } = await supabase
-        .from("profiles")
-        .select("id, username, avatar_url, stellar_address, created_at")
-        .eq("id", userId)
-        .single();
-      if (data) {
-        const p = data as Profile;
-        setProfile(p);
-        ensureWallet(p);
-      }
-    },
-    [supabase, ensureWallet]
-  );
-
-  // Listen for auth state changes
+  // Listen for auth state changes. Keep this callback synchronous:
+  // Supabase holds an auth lock while notifying subscribers, so awaiting
+  // profile queries here can deadlock signInWithPassword and leave the
+  // login button stuck on "Signing in...".
   useEffect(() => {
+    let mounted = true;
+
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (session?.user) {
-        setUser(session.user);
-        await fetchProfile(session.user.id);
-      } else {
-        setUser(null);
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!mounted) return;
+      setUser(session?.user ?? null);
+      if (!session?.user) {
         setProfile(null);
       }
       setLoading(false);
@@ -83,15 +70,55 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Initial session check
     supabase.auth.getUser().then(({ data: { user: u } }) => {
-      if (u) {
-        setUser(u);
-        fetchProfile(u.id);
+      if (!mounted) return;
+      setUser(u ?? null);
+      if (!u) {
+        setProfile(null);
       }
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
-  }, [supabase, fetchProfile]);
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, [supabase]);
+
+  // Fetch profile after auth state settles. This keeps Supabase queries out
+  // of onAuthStateChange and avoids the login deadlock/race.
+  useEffect(() => {
+    if (!user?.id) {
+      setProfile(null);
+      return;
+    }
+
+    const userId = user.id;
+    let cancelled = false;
+
+    async function fetchProfile() {
+      const { data } = await supabase
+        .from("profiles")
+        .select("id, username, avatar_url, stellar_address, created_at")
+        .eq("id", userId)
+        .single();
+
+      if (!cancelled && data) {
+        const p = data as Profile;
+        setProfile(p);
+        ensureWallet(p);
+      }
+    }
+
+    fetchProfile().catch(() => {
+      if (!cancelled) {
+        setProfile(null);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [supabase, user?.id, ensureWallet]);
 
   const signIn = useCallback(
     async (email: string, password: string): Promise<string | null> => {

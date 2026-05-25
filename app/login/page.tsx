@@ -32,12 +32,18 @@ function LoginForm() {
     setLoading(true);
     setError(null);
 
-    const err = await signIn(email, password);
-    if (err) {
-      setError(translateAuthError(err));
+    try {
+      const err = await signIn(email, password);
+      if (err) {
+        setError(translateAuthError(err));
+        setLoading(false);
+      } else {
+        router.replace(next);
+        router.refresh();
+      }
+    } catch {
+      setError("No se pudo iniciar sesión. Intenta nuevamente.");
       setLoading(false);
-    } else {
-      router.push(next);
     }
   };
 
