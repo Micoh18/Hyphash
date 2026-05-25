@@ -92,6 +92,22 @@ export function LocationPicker({
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
       }).addTo(map);
 
+      // Use inline SVG/HTML icons instead of Leaflet's default marker PNG.
+      // In Next/Vercel, the default Leaflet marker image path can resolve to
+      // a missing asset, leaving only a broken/empty icon on the map.
+      const selectedPinIcon = L.divIcon({
+        className: "hyphash-selected-location-pin",
+        html: `
+          <svg width="34" height="44" viewBox="0 0 34 44" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 3px 5px rgba(0,0,0,.35));">
+            <path d="M17 42C17 42 31 25.5 31 15.5C31 7.5 24.7 1 17 1C9.3 1 3 7.5 3 15.5C3 25.5 17 42 17 42Z" fill="#2f5d1f" stroke="#ffffff" stroke-width="3" />
+            <circle cx="17" cy="15.5" r="5" fill="#ffffff" />
+          </svg>
+        `,
+        iconSize: [34, 44],
+        iconAnchor: [17, 42],
+        popupAnchor: [0, -36],
+      });
+
       const boundary = L.circle([gpsLat, gpsLng], {
         radius,
         color: "#6b7280",
@@ -114,7 +130,10 @@ export function LocationPicker({
 
       // Place pin if already set
       if (pinLat !== null && pinLng !== null) {
-        const marker = L.marker([pinLat, pinLng], { draggable: true }).addTo(map);
+        const marker = L.marker([pinLat, pinLng], {
+          draggable: true,
+          icon: selectedPinIcon,
+        }).addTo(map);
         marker.on("dragend", () => {
           const pos = marker.getLatLng();
           if (isWithinBounds(pos.lat, pos.lng)) {
@@ -149,6 +168,7 @@ export function LocationPicker({
         } else {
           const marker = L.marker([clickLat, clickLng], {
             draggable: true,
+            icon: selectedPinIcon,
           }).addTo(map);
           marker.on("dragend", () => {
             const pos = marker.getLatLng();
